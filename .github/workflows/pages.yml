@@ -29,6 +29,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0 # Determine the last change to published content accurately.
       - name: Test the site builder
         run: python3 -m unittest discover -s tests -v
       - name: Build from the latest published desktop release
@@ -38,8 +40,7 @@ jobs:
           set -euo pipefail
           gh api repos/GrabLine/GrabLine/releases/latest > "$RUNNER_TEMP/release.json"
           python3 scripts/build_site.py \
-            --release-json "$RUNNER_TEMP/release.json" \
-            --lastmod "$(date -u +%F)"
+            --release-json "$RUNNER_TEMP/release.json"
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:

@@ -8,7 +8,7 @@ directory's history, filtered from development commit
 
 ## Build and check
 
-Python 3.12 or later is sufficient; there are no Python package dependencies.
+Use Python 3.12 or later and Git; there are no Python package dependencies.
 
 ```sh
 python -m unittest discover -s tests -v
@@ -18,8 +18,12 @@ python -m http.server --directory _site 8000
 ```
 
 `release.json` is temporary build input; do not commit it. The builder generates
-`_site/latest.json`, stamps the sitemap date and sets JSON-LD `softwareVersion`
-from the release tag. A new app release needs no manual website version bump.
+`_site/latest.json` and sets JSON-LD `softwareVersion` from the release tag.
+The sitemap uses the later of the last published-content commit date and the
+release publication date. Rebuilding unchanged content preserves that date.
+Use a full Git checkout for accurate history; source archives can supply an
+explicit `--lastmod YYYY-MM-DD`. A new app release needs no manual website
+version bump.
 
 The Pages workflow runs after a main push, manual dispatch, `release-published`
 repository dispatch and a weekly Monday fallback. GitHub can disable scheduled
