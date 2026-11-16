@@ -508,6 +508,38 @@
         margin-top: auto;
         padding-top: 8px;
       }
+      .phone-band {
+        margin-top: 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .phone-band.is-you {
+        border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+        background: color-mix(in srgb, var(--accent) 6%, var(--panel));
+      }
+      .phone-band .os {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+      }
+      .phone-band p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 6px 0 0;
+        max-width: 60ch;
+      }
+      .phone-band .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
       .note {
         margin-top: 24px;
         color: var(--muted);
@@ -938,8 +970,22 @@
                 </div>
               </div>
             </div>
+            <div class="phone-band" id="android">
+              <div>
+                <span class="os">Android</span>
+                <p>
+                  GrabLine for Android downloads on your phone and controls GrabLine on your PC over
+                  your own Wi-Fi. Android 8 or later. Pick the APK for your phone (arm64-v8a for most
+                  phones); checksums are listed beside each release.
+                </p>
+              </div>
+              <div class="actions">
+                <a class="btn btn-primary" href="https://github.com/GrabLine/grabline-android/releases/latest" target="_blank" rel="noopener">Android APK</a>
+                <a class="btn btn-ghost" href="https://github.com/GrabLine/grabline-android" target="_blank" rel="noopener">Source and F-Droid</a>
+              </div>
+            </div>
             <p class="note">
-              Builds are unsigned, so the OS may ask for confirmation once. On Windows choose <b>More info</b> then <b>Run anyway</b>.
+              Desktop builds are unsigned, so the OS may ask for confirmation once. On Windows choose <b>More info</b> then <b>Run anyway</b>.
               On macOS <b>right click</b> then <b>Open</b>; on macOS 15 and later use System Settings, <b>Privacy &amp; Security</b>, <b>Open Anyway</b>.
               On Linux without FUSE, use the
               <a id="tarballLink" href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener"><b>tar.gz</b></a>.
@@ -1095,6 +1141,14 @@
       const heroBtn = document.getElementById("heroDownload");
       // On a phone the button keeps its own label and its link to #download.
       if (osName) heroBtn.textContent = "Download for " + osName;
+
+      // Android phones get the phone build instead of a desktop one.
+      if (/android/i.test(navigator.userAgent)) {
+        const band = document.getElementById("android");
+        if (band) band.classList.add("is-you");
+        heroBtn.textContent = "Get GrabLine for Android";
+        heroBtn.href = "#android";
+      }
 
       const dlGrid = document.getElementById("dlGrid");
       if (dlGrid && osKey) {
