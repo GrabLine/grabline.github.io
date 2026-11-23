@@ -540,6 +540,17 @@
         flex-wrap: wrap;
         gap: 8px;
       }
+      .phone-band .android-note {
+        font-size: 0.82rem;
+      }
+      .phone-band .android-note a,
+      .phone-band .android-note b {
+        color: var(--accent-2);
+      }
+      .phone-band .android-note a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
       .note {
         margin-top: 24px;
         color: var(--muted);
@@ -975,12 +986,13 @@
                 <span class="os">Android</span>
                 <p>
                   GrabLine for Android downloads on your phone and controls GrabLine on your PC over
-                  your own Wi-Fi. Android 8 or later. Pick the APK for your phone (arm64-v8a for most
-                  phones); checksums are listed beside each release.
+                  your own Wi-Fi. Android 8 or later. The button downloads the APK that fits your
+                  phone; checksums and other versions are on the release page.
                 </p>
+                <p class="android-note" id="androidNote" hidden></p>
               </div>
               <div class="actions">
-                <a class="btn btn-primary" href="https://github.com/GrabLine/grabline-android/releases/latest" target="_blank" rel="noopener">Android APK</a>
+                <a class="btn btn-primary" id="androidDownload" href="https://github.com/GrabLine/grabline-android/releases/latest" target="_blank" rel="noopener">Android APK</a>
                 <a class="btn btn-ghost" href="https://github.com/GrabLine/grabline-android" target="_blank" rel="noopener">Source code</a>
               </div>
             </div>
@@ -1202,6 +1214,95 @@
         .catch(() => {
           document.getElementById("heroVersion").textContent = "Latest release";
         });
+      // Android: the buttons download the APK that fits this phone, straight away.
+      // android-latest.json is written at deploy time (scripts/build_site.py), like latest.json above.
+      const onAndroid = /android/i.test(navigator.userAgent);
+      const androidBtn = document.getElementById("androidDownload");
+      const androidNote = document.getElementById("androidNote");
+      const RELEASES = "https://github.com/GrabLine/grabline-android/releases/latest";
+
+      // abi is null when the browser does not say (Firefox, Samsung Internet): most phones are arm64.
+      async function androidFacts() {
+        const facts = { abi: null, major: null };
+        const m = /android (\d+)/i.exec(navigator.userAgent);
+        if (m) facts.major = parseInt(m[1], 10);
+        const uad = navigator.userAgentData;
+        // Only a phone says anything useful: on a PC the processor is the PC's, not the phone's.
+        if (onAndroid && uad && uad.getHighEntropyValues) {
+          try {
+            const v = await uad.getHighEntropyValues(["architecture", "bitness", "platformVersion"]);
+            const arch = (v.architecture || "").toLowerCase();
+            // A 32-bit browser on a 64-bit phone gets the 32-bit build, which runs on both.
+            if (arch === "arm") facts.abi = v.bitness === "32" ? "armeabi-v7a" : "arm64-v8a";
+            else if (arch === "x86") facts.abi = v.bitness === "64" ? "x86_64" : "universal";
+            const pv = parseInt(v.platformVersion, 10);
+            if (pv > 0) facts.major = pv; // Chrome freezes the Android version in its user agent
+          } catch (e) {
+            /* keep what the user agent said */
+          }
+        }
+        return facts;
+      }
+
+      function pickApk(assets, abi) {
+        const apks = assets.filter((a) => /\.apk$/i.test(a.name));
+        const ends = (suffix) => apks.find((a) => a.name.toLowerCase().endsWith("-" + suffix + ".apk"));
+        return (abi && ends(abi)) || ends("arm64-v8a") || ends("universal") || apks[0] || null;
+      }
+
+      function apkLabel(apk) {
+        return apk.name.replace(/^GrabLine-v[\d.]+-/i, "").replace(/\.apk$/i, "");
+      }
+
+      function sizeLabel(bytes) {
+        // Decimal units, as phones show them in the download prompt.
+        return bytes >= 1e6 ? Math.round(bytes / 1e6) + " MB" : Math.max(1, Math.round(bytes / 1e3)) + " KB";
+      }
+
+      function noteLink(text, href) {
+        const a = document.createElement("a");
+        a.textContent = text;
+        a.href = href;
+        a.rel = "noopener";
+        return a;
+      }
+
+      if (androidBtn) {
+        fetch("android-latest.json")
+          .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+          .then(async (rel) => {
+            const assets = rel.assets || [];
+            const facts = await androidFacts();
+            const apk = pickApk(assets, facts.abi);
+            if (!apk) return;
+            androidBtn.href = apk.browser_download_url;
+            androidBtn.removeAttribute("target"); // a download, not a page: stay here
+            androidBtn.textContent = "Download Android APK";
+            if (onAndroid && heroBtn) {
+              heroBtn.href = apk.browser_download_url;
+              heroBtn.removeAttribute("target");
+              heroBtn.textContent = "Download for Android";
+            }
+            if (!androidNote) return;
+            androidNote.replaceChildren();
+            const strong = document.createElement("b");
+            strong.textContent = rel.tag_name || "Latest";
+            androidNote.append(strong, " · " + apkLabel(apk) + " · " + sizeLabel(apk.size));
+            if (facts.major !== null && facts.major < 8) {
+              androidNote.append(". This phone runs Android " + facts.major + "; GrabLine needs Android 8 or later");
+            } else if (!onAndroid) {
+              androidNote.append(". Open this page on your phone to get the right APK for it");
+            }
+            const universal = assets.find((a) => /-universal\.apk$/i.test(a.name));
+            androidNote.append(". Not installing? ");
+            if (universal && universal !== apk) androidNote.append(noteLink("Universal APK", universal.browser_download_url), " · ");
+            androidNote.append(noteLink("All versions", RELEASES), ".");
+            androidNote.hidden = false;
+          })
+          .catch(() => {
+            // No file or no network: the button keeps its link to the release page.
+          });
+      }
     </script>
   </body>
 </html>
