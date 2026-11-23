@@ -169,6 +169,116 @@ class BuildSiteTests(unittest.TestCase):
                 (destination / "sitemap.xml").read_text(encoding="utf-8"),
             )
 
+    DESKTOP_RELEASE = {
+        "tag_name": "v9.8.7",
+        "assets": [
+            {
+                "name": "Grabline-Setup-9.8.7.exe",
+                "browser_download_url": (
+                    "https://github.com/GrabLine/GrabLine/releases/download/"
+                    "v9.8.7/Grabline-Setup-9.8.7.exe"
+                ),
+            }
+        ],
+    }
+
+    def android_asset(self, name, size=1000, repo="GrabLine/grabline-android"):
+        return {
+            "name": name,
+            "size": size,
+            "browser_download_url": (
+                f"https://github.com/{repo}/releases/download/v1.2.3/{name}"
+            ),
+            "unneeded_api_field": "excluded",
+        }
+
+    def build_with_android(self, android_release, destination):
+        android_path = destination.parent / "android.json"
+        android_path.write_text(json.dumps(android_release), encoding="utf-8")
+        release_path = destination.parent / "release.json"
+        release_path.write_text(json.dumps(self.DESKTOP_RELEASE), encoding="utf-8")
+        return subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "build_site.py"),
+                "--release-json",
+                str(release_path),
+                "--android-release-json",
+                str(android_path),
+                "--output",
+                str(destination),
+                "--lastmod",
+                "2026-11-14",
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+    def test_android_release_lists_only_its_apks_with_sizes(self):
+        release = {
+            "tag_name": "v1.2.3",
+            "assets": [
+                self.android_asset("GrabLine-v1.2.3-arm64-v8a.apk", 77_000_000),
+                self.android_asset("GrabLine-v1.2.3-universal.apk", 233_000_000),
+                self.android_asset("SHA256SUMS.txt", 383),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "site"
+            result = self.build_with_android(release, destination)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            android = json.loads(
+                (destination / "android-latest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(android["tag_name"], "v1.2.3")
+            self.assertEqual(
+                [(a["name"], a["size"]) for a in android["assets"]],
+                [
+                    ("GrabLine-v1.2.3-arm64-v8a.apk", 77_000_000),
+                    ("GrabLine-v1.2.3-universal.apk", 233_000_000),
+                ],
+            )
+            self.assertNotIn("unneeded_api_field", json.dumps(android))
+
+    def test_site_builds_without_an_android_release(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "site"
+            result = self.run_build(self.DESKTOP_RELEASE, destination)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertFalse((destination / "android-latest.json").exists())
+
+    def test_android_apk_from_another_repository_is_refused(self):
+        release = {
+            "tag_name": "v1.2.3",
+            "assets": [
+                self.android_asset("evil.apk", repo="someone/else"),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "site"
+            result = self.build_with_android(release, destination)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(destination.exists())
+
+    def test_android_release_needs_a_version_tag_and_an_apk(self):
+        for release in (
+            {"tag_name": "latest", "assets": [self.android_asset("a.apk")]},
+            {"tag_name": "v1.2.3", "assets": [self.android_asset("SHA256SUMS.txt")]},
+            {"tag_name": "v1.2.3", "assets": [self.android_asset("a.apk", size=0)]},
+        ):
+            with tempfile.TemporaryDirectory() as temporary:
+                destination = Path(temporary) / "site"
+                result = self.build_with_android(release, destination)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse(destination.exists())
+
+    def test_page_has_the_android_download_wiring(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        for needle in ('id="androidDownload"', 'id="androidNote"', "android-latest.json"):
+            self.assertIn(needle, html)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,7 @@ on:
   repository_dispatch:
     types: [release-published]
   schedule:
-    - cron: "0 4 * * 1" # Monday 09:00 Asia/Karachi; dispatch is the primary trigger.
+    - cron: "0 4 * * *" # Daily 09:00 Asia/Karachi; release dispatches are the primary trigger.
 
 permissions:
   contents: read
@@ -33,14 +33,21 @@ jobs:
           fetch-depth: 0 # Determine the last change to published content accurately.
       - name: Test the site builder
         run: python3 -m unittest discover -s tests -v
-      - name: Build from the latest published desktop release
+      - name: Build from the latest published desktop and Android releases
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           gh api repos/GrabLine/GrabLine/releases/latest > "$RUNNER_TEMP/release.json"
+          android=()
+          if gh api repos/GrabLine/grabline-android/releases/latest > "$RUNNER_TEMP/android.json"; then
+            android=(--android-release-json "$RUNNER_TEMP/android.json")
+          else
+            # The page still works: its Android button keeps linking to the release page.
+            echo "::warning::Could not read the latest Android release; the Android button links to the release page."
+          fi
           python3 scripts/build_site.py \
-            --release-json "$RUNNER_TEMP/release.json"
+            --release-json "$RUNNER_TEMP/release.json" "${android[@]}"
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
