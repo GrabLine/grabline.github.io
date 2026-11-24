@@ -113,6 +113,10 @@
       img {
         height: auto;
       }
+      picture {
+        display: block;
+        min-width: 0;
+      }
       a {
         color: inherit;
       }
@@ -426,7 +430,7 @@
       .show.flip {
         grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
       }
-      .show.flip .shot {
+      .show.flip .shot-wrap {
         order: 2;
       }
       .index {
@@ -753,7 +757,7 @@
           grid-template-columns: minmax(0, 1fr);
           gap: 32px;
         }
-        .show.flip .shot {
+        .show.flip .shot-wrap {
           order: 0;
         }
         .groups {
@@ -782,6 +786,36 @@
         .kinds dl,
         .groups {
           grid-template-columns: minmax(0, 1fr);
+        }
+        /* On a phone the PC and phone shots stack, each at a size you can read.
+           The PC shots switch to narrower crops of the same window. */
+        .stage,
+        .duo {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 28px;
+        }
+        .stage {
+          margin-top: 8px;
+        }
+        .hero {
+          padding-block: 40px 72px;
+        }
+        .kinds {
+          padding-bottom: 64px;
+        }
+        .show {
+          padding-block: 16px 72px;
+        }
+        .index {
+          padding-block: 16px 80px;
+        }
+        .ext .popup {
+          width: min(320px, 100%);
+        }
+        .stage .phone,
+        .duo .phone {
+          justify-self: center;
+          width: min(66%, 280px);
         }
         .band,
         .get {
@@ -824,7 +858,10 @@
           </p>
         </div>
         <div class="stage">
-          <img class="shot" src="assets/shot-downloads.webp" width="1600" height="833" alt="GrabLine on a PC with downloads in progress" fetchpriority="high" />
+          <picture>
+            <source media="(max-width: 640px)" srcset="assets/shot-downloads-m.webp" width="920" height="490" />
+            <img class="shot" src="assets/shot-downloads.webp" width="1600" height="833" alt="GrabLine on a PC with downloads in progress" fetchpriority="high" />
+          </picture>
           <img class="phone" src="assets/phone-downloads.webp" width="540" height="1200" alt="GrabLine for Android with downloads in progress" />
         </div>
       </section>
@@ -861,7 +898,10 @@
       </section>
 
       <section class="show flip pad" aria-labelledby="queues-title">
-        <img class="shot reveal" src="assets/shot-queues.webp" width="1600" height="583" alt="The queue manager with Movies, Games and Music queues" loading="lazy" />
+        <picture class="shot-wrap">
+          <source media="(max-width: 640px)" srcset="assets/shot-queues-m.webp" width="838" height="600" />
+          <img class="shot reveal" src="assets/shot-queues.webp" width="1600" height="583" alt="The queue manager with Movies, Games and Music queues" loading="lazy" />
+        </picture>
         <div>
           <h2 id="queues-title">Queues that run themselves</h2>
           <p>Sort downloads into named queues. Each one has its own limit, can run only at night, can wait for another to finish, and picks up new files of its type on its own.</p>
@@ -928,7 +968,10 @@
             <p class="note">Pairing takes one QR code and stays on your Wi-Fi, encrypted, with no account or cloud server in between.</p>
           </div>
           <div class="duo">
-            <img class="pc reveal" src="assets/shot-devices.webp" width="1600" height="1000" alt="The Devices page on the PC showing downloads running on a paired phone" loading="lazy" />
+            <picture>
+              <source media="(max-width: 640px)" srcset="assets/shot-devices-m.webp" width="1012" height="656" />
+              <img class="pc reveal" src="assets/shot-devices.webp" width="1600" height="1000" alt="The Devices page on the PC showing downloads running on a paired phone" loading="lazy" />
+            </picture>
             <img class="phone" src="assets/phone-share.webp" width="540" height="1200" alt="Sharing a link on the phone and choosing to download it on the PC" loading="lazy" />
           </div>
         </div>
