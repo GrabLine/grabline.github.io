@@ -6,18 +6,15 @@
     <title>GrabLine: free download manager for PC and Android</title>
     <meta
       name="description"
-      content="GrabLine is a free, open source download manager for Windows, macOS, Linux and Android, with a browser extension. Fast downloads, video, torrents and cloud, and your phone and PCs in one list."
+      content="GrabLine is a free, open source download manager for Windows, macOS, Linux and Android, with a browser extension. Fast downloads, video, torrents and servers, and your phone paired with your PC."
     />
     <link rel="canonical" href="https://grabline.github.io/" />
-    <meta name="theme-color" content="#0a0d14" />
+    <meta name="theme-color" content="#f3f4f6" />
     <link rel="icon" href="assets/favicon.png?v=6" />
     <link rel="apple-touch-icon" href="assets/logo.png?v=7" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="GrabLine: free download manager for PC and Android" />
-    <meta
-      property="og:description"
-      content="Fast downloads, video, torrents and cloud on Windows, macOS, Linux and Android. Free and open source."
-    />
+    <meta property="og:description" content="Fast downloads, video, torrents and servers on Windows, macOS, Linux and Android. Free and open source." />
     <meta property="og:image" content="https://grabline.github.io/assets/og.png?v=9" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -25,10 +22,7 @@
     <meta property="og:url" content="https://grabline.github.io/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="GrabLine: free download manager for PC and Android" />
-    <meta
-      name="twitter:description"
-      content="Fast downloads, video, torrents and cloud. Your phone and PCs in one list. Free and open source."
-    />
+    <meta name="twitter:description" content="Fast downloads, video, torrents and servers. Your phone paired with your PC. Free and open source." />
     <meta name="twitter:image" content="https://grabline.github.io/assets/og.png?v=9" />
     <script type="application/ld+json">
       {
@@ -37,7 +31,7 @@
         "name": "GrabLine",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Windows, macOS, Linux, Android",
-        "description": "Free open source download manager for PC and Android, with a browser extension, video, torrents, cloud and device pairing.",
+        "description": "Free open source download manager for PC and Android, with a browser extension, video, torrents, servers and device pairing.",
         "url": "https://grabline.github.io/",
         "downloadUrl": "https://github.com/GrabLine/GrabLine/releases/latest",
         "softwareVersion": "1.33.1",
@@ -45,15 +39,13 @@
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "screenshot": [
           "https://grabline.github.io/assets/shot-downloads.webp",
-          "https://grabline.github.io/assets/shot-dashboard.webp",
+          "https://grabline.github.io/assets/shot-devices.webp",
           "https://grabline.github.io/assets/phone-add.webp",
-          "https://grabline.github.io/assets/ext-popup.webp",
-          "https://grabline.github.io/assets/shot-devices.webp"
+          "https://grabline.github.io/assets/ext-popup.webp"
         ],
         "author": { "@type": "Organization", "name": "GrabLine" }
       }
     </script>
-    <!-- Self-hosted fonts (latin subset): no third-party request on load. -->
     <link rel="preload" href="assets/fonts/ibm-plex-sans-var.woff2" as="font" type="font/woff2" crossorigin />
     <style>
       @font-face {
@@ -63,585 +55,552 @@
         font-display: swap;
         src: url("assets/fonts/ibm-plex-sans-var.woff2") format("woff2");
       }
-      /* One dark theme: the apps and every screenshot are dark, and the brand
-         (docs/BRAND.md) is defined on this palette. */
+      @font-face {
+        font-family: "IBM Plex Mono";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("assets/fonts/ibm-plex-mono-400.woff2") format("woff2");
+      }
+      /*
+        GrabLine site system
+        Page: light cool grey, so the dark app screenshots read as real windows.
+        One dark band (night) for the phone and PC story.
+        Accent: the logo's blue, used for actions and links only.
+        Radius: screenshots 10px like app windows, buttons 8px, phones 24px.
+        Mono: only for real file names and versions.
+      */
       :root {
-        --ink: #0a0d14;
-        --panel: #121826;
-        --line: #222b3b;
-        --text: #e8eef8;
-        --muted: #9aa6ba;
+        --paper: #f3f4f6;
+        --white: #ffffff;
+        --ink: #10141b;
+        --muted: #566072;
+        --line: #dce0e6;
         --blue: #2563eb;
-        --blue-2: #4b8af7;
-        --blue-hover: #2e6bee;
+        --blue-dark: #1d4fd0;
+        --night: #0e1524;
+        --night-line: #24304a;
+        --night-muted: #a7b2c6;
         --sans: "IBM Plex Sans", system-ui, sans-serif;
-        --wrap: min(1120px, calc(100% - 32px));
-        /* Radius rule: images and panels 14px, phones 26px, controls 10px. */
-        --r: 14px;
-        --r-phone: 26px;
-        --r-ctl: 10px;
-        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        --mono: "IBM Plex Mono", ui-monospace, monospace;
+        --gutter: max(20px, calc((100vw - 1120px) / 2));
       }
       * {
         box-sizing: border-box;
       }
       html {
         scroll-behavior: smooth;
-        scroll-padding-top: 72px;
+        scroll-padding-top: 76px;
       }
       body {
         margin: 0;
-        background: var(--ink);
-        color: var(--text);
+        background: var(--paper);
+        color: var(--ink);
         font: 400 17px/1.6 var(--sans);
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
       }
-      img {
+      img,
+      svg {
         display: block;
         max-width: 100%;
+      }
+      img {
         height: auto;
       }
       a {
         color: inherit;
-        text-decoration: none;
       }
       p,
       h1,
       h2,
       h3,
       ul,
-      ol {
+      ol,
+      dl,
+      dd {
         margin: 0;
       }
-      h1,
-      h2,
-      h3 {
-        line-height: 1.12;
-        letter-spacing: -0.022em;
+      h2 {
+        font-size: clamp(1.75rem, 3vw, 2.35rem);
         font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+      h3 {
+        font-size: 1.08rem;
+        font-weight: 600;
+        line-height: 1.3;
       }
       :focus-visible {
-        outline: 2px solid var(--blue-2);
+        outline: 2px solid var(--blue);
         outline-offset: 3px;
         border-radius: 4px;
       }
       .skip {
         position: absolute;
         left: -9999px;
-        top: 0;
         z-index: 100;
         padding: 10px 14px;
         background: var(--blue);
         color: #fff;
-        border-radius: var(--r-ctl);
       }
       .skip:focus {
         left: 12px;
         top: 12px;
       }
-      .wrap {
-        width: var(--wrap);
-        margin-inline: auto;
+      .pad {
+        padding-inline: var(--gutter);
       }
       .link {
-        color: var(--blue-2);
+        color: var(--blue);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
       }
       .link:hover {
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        color: var(--blue-dark);
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.86em;
       }
 
       .btn {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        min-height: 46px;
+        gap: 10px;
+        min-height: 48px;
         padding: 0 20px;
-        border-radius: var(--r-ctl);
+        border-radius: 8px;
         border: 1px solid transparent;
-        font-weight: 600;
-        font-size: 0.97rem;
+        font: 600 1rem var(--sans);
+        text-decoration: none;
         white-space: nowrap;
-        transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+        cursor: pointer;
       }
-      .btn:active {
-        transform: translateY(1px);
+      .btn svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+        flex: none;
       }
-      .btn-primary {
+      .btn-blue {
         background: var(--blue);
         color: #fff;
       }
-      .btn-primary:hover {
-        background: var(--blue-hover);
+      .btn-blue:hover {
+        background: var(--blue-dark);
       }
-      .btn-ghost {
+      .btn-plain {
         border-color: var(--line);
-        background: var(--panel);
+        background: var(--white);
+        color: var(--ink);
       }
-      .btn-ghost:hover {
-        border-color: var(--blue-2);
+      .btn-plain:hover {
+        border-color: var(--ink);
+      }
+      .btn .ver {
+        font-family: var(--mono);
+        font-weight: 400;
+        font-size: 0.85rem;
+        opacity: 0.8;
       }
 
-      /* Nav */
-      .nav {
+      /* Top bar */
+      .bar {
         position: sticky;
         top: 0;
-        z-index: 20;
-        background: color-mix(in srgb, var(--ink) 88%, transparent);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 60px;
+        background: color-mix(in srgb, var(--paper) 92%, transparent);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--line);
       }
-      .nav-inner {
+      .bar .home {
         display: flex;
         align-items: center;
-        height: 64px;
-        gap: 12px;
-      }
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
+        gap: 9px;
         font-weight: 700;
-        font-size: 1.08rem;
-        letter-spacing: -0.02em;
+        text-decoration: none;
+        letter-spacing: -0.01em;
       }
-      .brand img {
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
+      .bar .home img {
+        width: 26px;
+        height: 26px;
       }
-      .brand .line {
-        color: var(--blue-2);
-      }
-      .nav-links {
+      .bar nav {
         display: flex;
-        gap: 2px;
+        gap: 4px;
         margin-left: auto;
       }
-      .nav-links a {
-        color: var(--muted);
-        font-size: 0.94rem;
-        font-weight: 500;
+      .bar nav a {
         padding: 8px 12px;
-        border-radius: 8px;
-      }
-      .nav-links a:hover {
-        color: var(--text);
-        background: var(--panel);
-      }
-      .nav-toggle {
-        display: none;
-        margin-left: auto;
-        min-height: 40px;
-        padding: 0 14px;
-        border: 1px solid var(--line);
-        border-radius: var(--r-ctl);
-        background: transparent;
-        color: var(--text);
-        font: 600 0.95rem var(--sans);
-        cursor: pointer;
-      }
-
-      /* Hero: one picture of the two devices together */
-      .hero {
-        position: relative;
-        padding: 72px 0 0;
-        text-align: center;
-        overflow: hidden;
-      }
-      .hero::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 320px;
-        width: 1100px;
-        height: 600px;
-        transform: translateX(-50%);
-        background: radial-gradient(closest-side, rgba(37, 99, 235, 0.26), transparent 72%);
-        pointer-events: none;
-      }
-      .hero h1 {
-        position: relative;
-        font-size: clamp(2.3rem, 4.6vw, 3.6rem);
-        max-width: 21ch;
-        margin-inline: auto;
-      }
-      .hero .lede {
-        position: relative;
-        margin: 20px auto 0;
-        max-width: 46ch;
-        font-size: 1.15rem;
-        color: var(--muted);
-      }
-      .cta-row {
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        justify-content: center;
-        margin-top: 32px;
-      }
-      .stage {
-        position: relative;
-        margin: 64px auto 0;
-        max-width: 1000px;
-        padding-right: 72px;
-      }
-      .stage .desk {
-        border-radius: var(--r) var(--r) 0 0;
-        border: 1px solid #2b3650;
-        border-bottom: 0;
-      }
-      .phone {
-        border-radius: var(--r-phone);
-        border: 6px solid #1c2334;
-        background: #1c2334;
-        overflow: hidden;
-        box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
-      }
-      .phone img {
-        border-radius: calc(var(--r-phone) - 6px);
-      }
-      .stage .phone {
-        position: absolute;
-        right: 0;
-        bottom: -70px;
-        width: 24%;
-      }
-      .hero-fade {
-        position: relative;
-        height: 120px;
-        margin-top: -120px;
-        background: linear-gradient(rgba(10, 13, 20, 0), var(--ink));
-        pointer-events: none;
-      }
-      .platforms {
-        position: relative;
-        padding-top: 108px;
+        border-radius: 6px;
         color: var(--muted);
         font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+      }
+      .bar nav a:hover {
+        color: var(--ink);
+        background: var(--white);
       }
 
-      /* Sections */
-      section {
-        padding-top: 120px;
-      }
-      .head {
-        max-width: 620px;
-      }
-      .head h2 {
-        font-size: clamp(1.9rem, 3.4vw, 2.6rem);
-      }
-      .head p {
-        margin-top: 14px;
-        color: var(--muted);
-        font-size: 1.08rem;
-      }
-
-      /* App switcher */
-      .tabs {
-        display: inline-flex;
-        gap: 4px;
-        margin-top: 36px;
-        padding: 4px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--panel);
-      }
-      .tab {
-        min-height: 42px;
-        padding: 0 18px;
-        border: 0;
-        border-radius: 9px;
-        background: transparent;
-        color: var(--muted);
-        font: 600 0.96rem var(--sans);
-        cursor: pointer;
-      }
-      .tab:hover {
-        color: var(--text);
-      }
-      .tab[aria-selected="true"] {
-        background: var(--blue);
-        color: #fff;
-      }
-      .panel {
+      /* Hero: the product first, screenshot running off the right edge */
+      .hero {
         display: grid;
-        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
         gap: 56px;
         align-items: center;
-        margin-top: 48px;
-        min-height: 520px;
+        padding: 72px 0 88px var(--gutter);
+        overflow: hidden;
       }
-      .panel[hidden] {
+      .hero .icon {
+        width: 72px;
+        height: 72px;
+      }
+      .hero h1 {
+        margin-top: 20px;
+        font-size: clamp(3rem, 6vw, 4.4rem);
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.035em;
+      }
+      .hero .what {
+        margin-top: 14px;
+        font-size: 1.2rem;
+        line-height: 1.45;
+        color: var(--muted);
+        max-width: 26ch;
+      }
+      .hero .btn {
+        margin-top: 30px;
+      }
+      .hero .req {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .hero .req a {
+        color: var(--muted);
+      }
+      .hero .shot {
+        width: min(980px, 100%);
+        min-width: 620px;
+        border-radius: 10px 0 0 10px;
+        box-shadow: 0 24px 60px -24px rgba(16, 20, 27, 0.45), 0 0 0 1px rgba(16, 20, 27, 0.1);
+      }
+      .hero .shot-phone {
+        display: none;
+        width: 260px;
+        border-radius: 24px;
+        border: 6px solid #1c2334;
+        box-shadow: 0 24px 60px -24px rgba(16, 20, 27, 0.5);
+      }
+      .android .hero .shot {
         display: none;
       }
-      .panel h3 {
-        font-size: 1.6rem;
+      .android .hero .shot-phone {
+        display: block;
       }
-      .panel .for {
-        margin-top: 6px;
-        color: var(--muted);
+
+      /* What it downloads: plain text, four kinds */
+      .kinds {
+        padding-block: 24px 112px;
       }
-      .points {
-        list-style: none;
-        padding: 0;
-        margin-top: 28px;
-        display: grid;
-        gap: 14px;
+      .kinds h2 {
+        max-width: 22ch;
       }
-      .points li {
-        position: relative;
-        padding-left: 22px;
-        color: var(--muted);
-      }
-      .points li::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0.62em;
-        width: 8px;
-        height: 8px;
-        border-radius: 2px;
-        background: var(--blue);
-      }
-      .points b {
-        color: var(--text);
-        font-weight: 600;
-      }
-      .panel .btn {
-        margin-top: 32px;
-      }
-      .shot {
-        border-radius: var(--r);
-        border: 1px solid #2b3650;
-        box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.9);
-      }
-      .pair {
+      .kinds dl {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 22px;
-        max-width: 460px;
-        margin-inline: auto;
-        padding-bottom: 48px;
-      }
-      .pair .phone:last-child {
-        transform: translateY(48px);
-      }
-      .popup {
-        max-width: 340px;
-        margin-inline: auto;
-        border-radius: var(--r);
-        overflow: hidden;
-        box-shadow: 0 0 0 1px #2b3650, 0 40px 90px -30px rgba(0, 0, 0, 0.9);
-      }
-
-      /* Devices */
-      .devices .shot {
-        margin-top: 48px;
-      }
-      .steps {
-        list-style: none;
-        padding: 0;
-        margin-top: 40px;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 32px;
-        counter-reset: step;
-      }
-      .steps li {
-        counter-increment: step;
-        color: var(--muted);
-        font-size: 0.98rem;
-      }
-      .steps li::before {
-        content: counter(step);
-        display: grid;
-        place-items: center;
-        width: 30px;
-        height: 30px;
-        margin-bottom: 14px;
-        border-radius: 50%;
-        border: 1px solid var(--blue);
-        color: var(--blue-2);
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-      .steps b {
-        display: block;
-        color: var(--text);
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      /* Download list */
-      .rows {
+        gap: 0 64px;
         margin-top: 40px;
         border-top: 1px solid var(--line);
       }
-      .row {
-        display: grid;
-        grid-template-columns: 200px minmax(0, 1fr) auto;
-        gap: 24px;
-        align-items: center;
-        padding: 22px 0;
+      .kinds dl div {
+        padding: 26px 0 28px;
         border-bottom: 1px solid var(--line);
       }
-      .row .name {
-        font-weight: 600;
-        font-size: 1.1rem;
-      }
-      .row .you {
-        display: none;
-        margin-left: 10px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: var(--blue-2);
-      }
-      .row.is-you .you {
-        display: inline;
-      }
-      .row .what {
+      .kinds dd {
+        margin-top: 6px;
         color: var(--muted);
-        font-size: 0.97rem;
+        max-width: 46ch;
       }
-      .row .acts {
+      .kinds .also {
+        margin-top: 24px;
+        color: var(--muted);
+      }
+
+      /* The one dark band: phone and PC */
+      .band {
+        background: var(--night);
+        color: #eef2f9;
+        padding-block: 104px 120px;
+        overflow: hidden;
+      }
+      .band-in {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        gap: 64px;
+        align-items: center;
+      }
+      .band p {
+        margin-top: 18px;
+        color: var(--night-muted);
+        max-width: 44ch;
+      }
+      .band p strong {
+        color: #fff;
+        font-weight: 600;
+      }
+      .band .btn {
+        margin-top: 32px;
+      }
+      .band .btn-plain {
+        background: transparent;
+        color: #fff;
+        border-color: var(--night-line);
+      }
+      .band .btn-plain:hover {
+        border-color: #fff;
+      }
+      .band .acts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .band .acts .btn {
+        margin-top: 32px;
+      }
+      .duo {
+        position: relative;
+        padding-bottom: 40px;
+      }
+      .duo .pc {
+        border-radius: 10px;
+        box-shadow: 0 0 0 1px var(--night-line);
+        width: 86%;
+        margin-left: 14%;
+      }
+      .duo .phone {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 30%;
+        border-radius: 24px;
+        border: 6px solid #232c40;
+        box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.8);
+      }
+      .band .note {
+        margin-top: 28px;
+        font-size: 0.92rem;
+      }
+
+      /* Extension */
+      .ext {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 72px;
+        align-items: center;
+        padding-block: 120px;
+      }
+      .ext .popup {
+        width: min(360px, 100%);
+        justify-self: center;
+        border-radius: 10px;
+        box-shadow: 0 24px 60px -28px rgba(16, 20, 27, 0.45), 0 0 0 1px rgba(16, 20, 27, 0.1);
+      }
+      .ext p {
+        margin-top: 18px;
+        color: var(--muted);
+        max-width: 46ch;
+      }
+      .ext ul {
+        margin-top: 22px;
+        padding-left: 1.1em;
+        color: var(--muted);
+        display: grid;
+        gap: 8px;
+      }
+      .ext li::marker {
+        color: var(--blue);
+      }
+      .ext .acts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      /* Downloads: a real list */
+      .get {
+        background: var(--white);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding-block: 96px;
+      }
+      .get .sub {
+        margin-top: 10px;
+        color: var(--muted);
+      }
+      .list {
+        margin-top: 36px;
+        list-style: none;
+        padding: 0;
+        border-top: 1px solid var(--line);
+      }
+      .item {
+        display: grid;
+        grid-template-columns: 36px 230px minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .item .logo {
+        width: 26px;
+        height: 26px;
+        fill: var(--ink);
+      }
+      .item .os {
+        font-weight: 600;
+      }
+      .item .os small {
+        display: block;
+        font-weight: 400;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+      .item .file {
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+      .item .acts {
         display: flex;
         gap: 10px;
         justify-content: flex-end;
         flex-wrap: wrap;
       }
+      .item .acts .btn {
+        min-height: 42px;
+        padding: 0 16px;
+        font-size: 0.95rem;
+      }
+      .item.mine {
+        background: linear-gradient(90deg, rgba(37, 99, 235, 0.06), transparent 70%);
+      }
+      .item .tag {
+        display: none;
+      }
+      .item.mine .tag {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 1px 8px;
+        border-radius: 999px;
+        background: var(--blue);
+        color: #fff;
+        font-size: 0.74rem;
+        font-weight: 600;
+        vertical-align: 2px;
+      }
       .android-note {
-        margin-top: 6px;
+        margin-top: 4px;
         font-size: 0.88rem;
-        color: var(--muted);
       }
       .android-note a {
-        color: var(--blue-2);
-        text-decoration: underline;
-        text-underline-offset: 2px;
+        color: var(--blue);
       }
-      .fine {
-        margin-top: 22px;
-        max-width: 84ch;
-        font-size: 0.9rem;
+      .get .fine {
+        margin-top: 24px;
+        max-width: 80ch;
+        font-size: 0.92rem;
         color: var(--muted);
       }
-      .fine b {
-        color: var(--text);
+      .get .fine b {
+        color: var(--ink);
         font-weight: 600;
       }
 
-      /* Privacy and questions */
-      .two {
+      /* Closing: privacy, questions, support */
+      .close {
         display: grid;
-        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-        gap: 64px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 72px;
+        padding-block: 104px 88px;
       }
-      .promises,
-      .faq {
+      .close h2 {
+        font-size: 1.5rem;
+      }
+      .close .facts {
+        margin-top: 20px;
         display: grid;
-        margin-top: 28px;
-      }
-      .promises {
-        gap: 20px;
-      }
-      .promises p {
+        gap: 14px;
         color: var(--muted);
       }
-      .promises b {
-        color: var(--text);
+      .close .facts b {
+        color: var(--ink);
         font-weight: 600;
       }
       .qa {
         border-bottom: 1px solid var(--line);
       }
-      .qa:first-child {
+      .qa:first-of-type {
+        margin-top: 16px;
         border-top: 1px solid var(--line);
       }
       .qa summary {
-        list-style: none;
         cursor: pointer;
-        padding: 18px 0;
+        padding: 16px 0;
         font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
+        list-style-position: outside;
       }
-      .qa summary::-webkit-details-marker {
-        display: none;
-      }
-      .qa summary::after {
-        content: "+";
-        color: var(--blue-2);
-        font-size: 1.3rem;
-        line-height: 1;
-        transition: transform 0.2s var(--ease);
-      }
-      .qa[open] summary::after {
-        transform: rotate(45deg);
+      .qa summary::marker {
+        color: var(--blue);
       }
       .qa p {
-        padding-bottom: 20px;
+        padding: 0 0 18px;
         color: var(--muted);
       }
-      .qa a {
-        color: var(--blue-2);
-      }
-
       footer {
-        margin-top: 120px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 24px;
+        padding-block: 28px 40px;
         border-top: 1px solid var(--line);
-        padding: 36px 0 48px;
+        font-size: 0.9rem;
         color: var(--muted);
-        font-size: 0.93rem;
       }
-      .foot {
+      footer nav {
         display: flex;
         flex-wrap: wrap;
-        align-items: center;
-        gap: 18px 28px;
-      }
-      .foot nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px 20px;
+        gap: 6px 18px;
         margin-left: auto;
       }
-      .foot nav a:hover {
-        color: var(--text);
+      footer a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      footer a:hover {
+        color: var(--ink);
+        text-decoration: underline;
       }
 
-      /* Motion: one entrance for the hero, and tab panels that show what changed. */
       @media (prefers-reduced-motion: no-preference) {
-        .hero .rise {
-          animation: rise 0.9s var(--ease) both;
-        }
-        .hero .lede {
-          animation-delay: 0.06s;
-        }
-        .hero .cta-row {
-          animation-delay: 0.12s;
-        }
-        .stage {
-          animation: rise 1.1s 0.18s var(--ease) both;
-        }
-        .panel {
-          animation: swap 0.45s var(--ease) both;
+        .hero .shot,
+        .hero .shot-phone {
+          animation: slide 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
       }
-      @keyframes rise {
+      @keyframes slide {
         from {
           opacity: 0;
-          transform: translateY(22px);
-        }
-      }
-      @keyframes swap {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
+          transform: translateX(40px);
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -650,80 +609,65 @@
         }
       }
 
-      @media (max-width: 900px) {
-        .nav-toggle {
-          display: inline-flex;
-          align-items: center;
-        }
-        .nav-links {
-          display: none;
-          position: absolute;
-          top: 64px;
-          left: 0;
-          right: 0;
-          flex-direction: column;
-          padding: 8px 16px 16px;
-          background: var(--ink);
-          border-bottom: 1px solid var(--line);
-        }
-        .nav.open .nav-links {
-          display: flex;
-        }
-        .nav-links a {
-          padding: 12px 8px;
-        }
-        .panel,
-        .two {
+      @media (max-width: 960px) {
+        .hero {
           grid-template-columns: minmax(0, 1fr);
-          gap: 40px;
-          min-height: 0;
+          gap: 44px;
+          padding: 48px var(--gutter) 64px;
         }
-        .row {
+        .hero .shot {
+          min-width: 0;
+          width: calc(100% + var(--gutter));
+          max-width: none;
+        }
+        .band-in,
+        .ext,
+        .close {
           grid-template-columns: minmax(0, 1fr);
-          gap: 10px;
+          gap: 48px;
         }
-        .row .acts {
+        .ext .popup {
+          order: 2;
+        }
+        .item {
+          grid-template-columns: 32px minmax(0, 1fr);
+          gap: 6px 14px;
+        }
+        .item .file,
+        .item .acts {
+          grid-column: 2;
+        }
+        .item .acts {
           justify-content: flex-start;
+          margin-top: 8px;
         }
       }
       @media (max-width: 640px) {
         body {
           font-size: 16px;
         }
-        .hero {
-          padding-top: 44px;
+        .bar nav a:not(.keep) {
+          display: none;
         }
-        section {
-          padding-top: 88px;
-        }
-        .stage {
-          margin-top: 44px;
-          padding-right: 40px;
-        }
-        .stage .phone {
-          width: 34%;
-          bottom: -40px;
-        }
-        .platforms {
-          padding-top: 72px;
-        }
-        .tabs {
-          display: flex;
-        }
-        .tab {
-          flex: 1;
-          padding: 0 8px;
-          font-size: 0.9rem;
-        }
-        .steps {
+        .kinds dl {
           grid-template-columns: minmax(0, 1fr);
-          gap: 24px;
         }
-        .cta-row .btn,
-        .row .acts .btn {
-          flex: 1 1 auto;
+        .band,
+        .get {
+          padding-block: 72px;
         }
-        .foot nav {
+        .ext,
+        .close {
+          padding-block: 80px;
+        }
+        .duo .pc {
+          width: 82%;
+          margin-left: 18%;
+        }
+        .duo .phone {
+          width: 36%;
+        }
+        footer nav {
           margin-left: 0;
         }
       }
@@ -731,290 +675,204 @@
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <nav class="nav" id="nav" aria-label="Main">
-      <div class="wrap nav-inner">
-        <a class="brand" href="#top" aria-label="GrabLine home"><img src="assets/logo.png?v=7" width="28" height="28" alt="" /><span aria-hidden="true">Grab<span class="line">Line</span></span></a>
-        <button class="nav-toggle" type="button" id="navToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
-        <div class="nav-links" id="navLinks">
-          <a href="#apps">Apps</a>
-          <a href="#devices">Devices</a>
-          <a href="#download">Download</a>
-          <a href="#faq">Questions</a>
-          <a href="https://github.com/GrabLine/GrabLine" target="_blank" rel="noopener">GitHub</a>
-        </div>
-      </div>
-    </nav>
+    <header class="bar pad">
+      <a class="home" href="#top"><img src="assets/logo.png?v=7" width="26" height="26" alt="" />GrabLine</a>
+      <nav aria-label="Main">
+        <a href="#phone">Android</a>
+        <a href="#extension">Extension</a>
+        <a class="keep" href="#download">Download</a>
+        <a href="https://github.com/GrabLine/GrabLine" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </header>
 
     <main id="main">
-      <header class="hero" id="top">
-        <div class="wrap">
-          <h1 class="rise">The download manager for your PC and your phone</h1>
-          <p class="lede rise">Fast downloads, video, torrents and cloud on Windows, macOS, Linux and Android. Free and open source, with no ads and no account.</p>
-          <div class="cta-row rise">
-            <a class="btn btn-primary" id="heroDownload" href="#download">Download GrabLine</a>
-            <a class="btn btn-ghost" id="heroAlt" href="#apps" data-tab="android">Get the Android app</a>
-          </div>
-          <div class="stage">
-            <img
-              class="desk"
-              src="assets/shot-downloads.webp"
-              width="1600"
-              height="833"
-              alt="GrabLine on a PC with downloads in progress"
-              fetchpriority="high"
-            />
-            <div class="phone">
-              <img src="assets/phone-downloads.webp" width="540" height="1200" alt="GrabLine for Android with downloads on the phone" />
-            </div>
-          </div>
+      <section class="hero" id="top">
+        <div>
+          <img class="icon" src="assets/logo.png?v=7" width="72" height="72" alt="" />
+          <h1>GrabLine</h1>
+          <p class="what">A free download manager for your PC and your Android phone.</p>
+          <a class="btn btn-blue" id="heroDownload" href="#download"><span id="heroLabel">Download</span> <span class="ver" id="heroVer"></span></a>
+          <p class="req" id="heroReq">
+            Windows, macOS, Linux and Android.
+            <a href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Release notes</a>
+          </p>
         </div>
-        <div class="hero-fade" aria-hidden="true"></div>
-        <p class="platforms wrap">Windows, macOS and Linux. Android 8 and later. Firefox, Chrome, Edge and Brave.</p>
-      </header>
+        <img class="shot" src="assets/shot-downloads.webp" width="1600" height="833" alt="GrabLine on a PC with downloads in progress" fetchpriority="high" />
+        <img class="shot-phone" src="assets/phone-downloads.webp" width="540" height="1200" alt="GrabLine for Android with downloads in progress" loading="lazy" />
+      </section>
 
-      <section id="apps">
-        <div class="wrap">
-          <div class="head">
-            <h2>Three apps that work together</h2>
-            <p>Use one or all three. Each works on its own.</p>
+      <section class="kinds pad" aria-labelledby="kinds-title">
+        <h2 id="kinds-title">Downloads files, videos, torrents and server folders</h2>
+        <dl>
+          <div>
+            <dt><h3>Big files, fast</h3></dt>
+            <dd>Each file is split across up to 32 connections. If your PC restarts, the download carries on where it stopped.</dd>
           </div>
-          <div class="tabs" role="tablist" aria-label="GrabLine apps">
-            <button class="tab" type="button" role="tab" id="tab-desktop" aria-controls="panel-desktop" aria-selected="true">Desktop</button>
-            <button class="tab" type="button" role="tab" id="tab-android" aria-controls="panel-android" aria-selected="false" tabindex="-1">Android</button>
-            <button class="tab" type="button" role="tab" id="tab-extension" aria-controls="panel-extension" aria-selected="false" tabindex="-1">Extension</button>
+          <div>
+            <dt><h3>Video and audio</h3></dt>
+            <dd>Paste a video page and choose 1080p, 4K or just the MP3 before it starts. Works on more than 1000 sites.</dd>
           </div>
+          <div>
+            <dt><h3>Torrents</h3></dt>
+            <dd>Magnet links, torrent files, RSS feeds and watch folders, with a limit on how long to seed.</dd>
+          </div>
+          <div>
+            <dt><h3>Servers and shared links</h3></dt>
+            <dd>SFTP, FTP, WebDAV and S3, plus Google Drive and Dropbox share links. Passwords stay in your system keychain.</dd>
+          </div>
+        </dl>
+        <p class="also">Queues, schedules and speed limits keep a long list in order.</p>
+      </section>
 
-          <div class="panel" role="tabpanel" id="panel-desktop" aria-labelledby="tab-desktop">
-            <div>
-              <h3>GrabLine for desktop</h3>
-              <p class="for">Windows, macOS and Linux</p>
-              <ul class="points">
-                <li><b>Fast.</b> Up to 32 connections per file, and downloads resume after a crash or restart.</li>
-                <li><b>Video and audio.</b> Pick the quality on more than 1000 sites, with subtitles and trimming.</li>
-                <li><b>Torrents and cloud.</b> Magnets, RSS and watch folders, plus SFTP, FTP, WebDAV and S3.</li>
-                <li><b>Organised.</b> Named queues, schedules, speed limits and a live dashboard.</li>
-              </ul>
-              <a class="btn btn-primary" href="#download">Get the desktop app</a>
+      <section class="band" id="phone" aria-labelledby="phone-title">
+        <div class="band-in pad">
+          <div>
+            <h2 id="phone-title">Send it to the PC from your phone</h2>
+            <p>Found a file on your phone? Share it to GrabLine and pick <strong>this phone</strong> or <strong>your PC</strong>. The PC downloads it while you are away from the desk, and the phone shows its progress.</p>
+            <p>The Android app is also a full download manager on its own, with video, torrents and servers.</p>
+            <div class="acts">
+              <a class="btn btn-blue" href="#download">Get the Android app</a>
             </div>
-            <img class="shot" src="assets/shot-dashboard.webp" width="1600" height="917" alt="The GrabLine dashboard with live speed and graphs" loading="lazy" />
+            <p class="note">Pairing takes one QR code and stays on your Wi-Fi, encrypted, with no account or cloud server.</p>
           </div>
-
-          <div class="panel" role="tabpanel" id="panel-android" aria-labelledby="tab-android" hidden>
-            <div>
-              <h3>GrabLine for Android</h3>
-              <p class="for">Android 8 and later, in 14 languages</p>
-              <ul class="points">
-                <li><b>Share to download.</b> Send a link from any app and choose the phone or your PC.</li>
-                <li><b>The full set.</b> Video, torrents and file servers work on the phone too.</li>
-                <li><b>Your PC in your pocket.</b> See, pause and start the PC's downloads from the phone.</li>
-                <li><b>Handy.</b> A home screen widget and a quick settings tile.</li>
-              </ul>
-              <a class="btn btn-primary" href="#download">Get the Android app</a>
-            </div>
-            <div class="pair">
-              <div class="phone"><img src="assets/phone-add.webp" width="540" height="1200" alt="Sharing a link to GrabLine and choosing to download it on the PC" loading="lazy" /></div>
-              <div class="phone"><img src="assets/phone-pc.webp" width="540" height="1200" alt="The phone showing the PC's downloads, live" loading="lazy" /></div>
-            </div>
-          </div>
-
-          <div class="panel" role="tabpanel" id="panel-extension" aria-labelledby="tab-extension" hidden>
-            <div>
-              <h3>GrabLine Connect</h3>
-              <p class="for">For Firefox, Chrome, Edge and Brave, with the desktop app</p>
-              <ul class="points">
-                <li><b>One click.</b> A download button appears on videos, audio and links as you browse.</li>
-                <li><b>Everything on the page.</b> The popup lists the media it found in the tab.</li>
-                <li><b>Takes over downloads.</b> Your browser's downloads go to GrabLine, if you want.</li>
-                <li><b>Stays local.</b> It talks only to GrabLine on your computer.</li>
-              </ul>
-              <a class="btn btn-primary" href="#download">Get the extension</a>
-            </div>
-            <div class="popup">
-              <img src="assets/ext-popup.webp" width="680" height="1080" alt="The GrabLine Connect popup listing videos found on a web page" loading="lazy" />
-            </div>
+          <div class="duo">
+            <img class="pc" src="assets/shot-devices.webp" width="1600" height="1000" alt="The Devices page on the PC showing downloads running on a paired phone" loading="lazy" />
+            <img class="phone" src="assets/phone-add.webp" width="540" height="1200" alt="Sharing a link on the phone and choosing to download it on the PC" loading="lazy" />
           </div>
         </div>
       </section>
 
-      <section id="devices" class="devices">
-        <div class="wrap">
-          <div class="head">
-            <h2>Your phone and PCs in one list</h2>
-            <p>Pair a phone or another PC once. Then each one shows the others' downloads and can control them.</p>
+      <section class="ext pad" id="extension" aria-labelledby="ext-title">
+        <img class="popup" src="assets/ext-popup.webp" width="680" height="1080" alt="The GrabLine Connect popup listing videos found on a web page" loading="lazy" />
+        <div>
+          <h2 id="ext-title">A download button in your browser</h2>
+          <p>GrabLine Connect adds a button to the videos and links you meet while browsing, and lists everything it finds on the page.</p>
+          <ul>
+            <li>Firefox, Chrome, Edge and Brave</li>
+            <li>Hands your browser's downloads to GrabLine, if you want</li>
+            <li>Talks only to GrabLine on your own computer</li>
+          </ul>
+          <div class="acts">
+            <a class="btn btn-plain" href="https://addons.mozilla.org/en-US/firefox/addon/grabline-connect/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.824 7.287c.008 0 .004 0 0 0zm-2.8-1.4c.006 0 .003 0 0 0zm16.754 2.161c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 01-.13-.24 2.118 2.118 0 01-.172-.46.03.03 0 00-.027-.03.038.038 0 00-.021 0l-.006.001a.037.037 0 00-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 00-2.305.587.297.297 0 00-.147.37c.057.162.24.24.396.17a5.622 5.622 0 012.008-.523l.067-.005a5.847 5.847 0 011.957.222l.095.03a5.816 5.816 0 01.616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 01.368.211 5.953 5.953 0 012.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 01-1.513-.292 4.42 4.42 0 01-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 00-.301-.227 5.388 5.388 0 01-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.816 9.816 0 00-1.562 3.52c-.003.013-.11.487-.19 1.073-.013.09-.026.181-.037.272a7.8 7.8 0 00-.069.667l-.002.034-.023.387-.001.06C.386 18.795 5.593 24 12.016 24c5.752 0 10.527-4.176 11.463-9.661.02-.149.035-.298.052-.448.232-1.994-.025-4.09-.753-5.844z"/></svg>Add to Firefox</a>
           </div>
-          <img class="shot" src="assets/shot-devices.webp" width="1600" height="1000" alt="The Devices page on the PC showing downloads running on a paired phone" loading="lazy" />
-          <ol class="steps">
-            <li><b>Open Devices on the PC</b>Click Pair a phone or PC to show a code.</li>
-            <li><b>Scan it with the phone</b>Or type the address and code by hand.</li>
-            <li><b>Done</b>It stays on your own Wi-Fi, encrypted, with no cloud in between.</li>
-          </ol>
         </div>
       </section>
 
-      <section id="download">
-        <div class="wrap">
-          <div class="head">
-            <h2>Download GrabLine <span id="dlVersion"></span></h2>
-            <p>Free, with nothing else to install.</p>
-          </div>
-          <div class="rows" id="dlGrid">
-            <div class="row plat" data-os="windows">
-              <div class="name">Windows<span class="you">Your system</span></div>
-              <p class="what">Installer, or a portable zip that runs without admin rights.</p>
+      <section class="get" id="download" aria-labelledby="get-title">
+        <div class="pad">
+          <h2 id="get-title">Download</h2>
+          <p class="sub">Version <span class="mono" id="dlVersion">1.33.1</span> for desktop. Everything is included, so there is nothing else to install.</p>
+          <ul class="list" id="dlGrid">
+            <li class="item plat" data-os="windows">
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h8.5v8.5H3zM12.5 3H21v8.5h-8.5zM3 12.5h8.5V21H3zM12.5 12.5H21V21h-8.5z"/></svg>
+              <div class="os">Windows<span class="tag">This device</span><small>Windows 10 or 11, 64-bit</small></div>
+              <span class="file mono" data-file>Installer and portable zip</span>
               <div class="acts">
-                <a class="btn btn-primary" data-dl href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Installer</a>
-                <a class="btn btn-ghost" data-dl-alt href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Portable zip</a>
+                <a class="btn btn-blue" data-dl href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Installer</a>
+                <a class="btn btn-plain" data-dl-alt href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Portable zip</a>
               </div>
-            </div>
-            <div class="row plat" data-os="mac">
-              <div class="name">macOS<span class="you">Your system</span></div>
-              <p class="what">For Apple Silicon Macs. Drag GrabLine to Applications.</p>
+            </li>
+            <li class="item plat" data-os="mac">
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+              <div class="os">macOS<span class="tag">This device</span><small>Apple Silicon (M1 and later)</small></div>
+              <span class="file mono" data-file>Disk image</span>
               <div class="acts">
-                <a class="btn btn-primary" data-dl href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Download DMG</a>
+                <a class="btn btn-blue" data-dl href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Download DMG</a>
               </div>
-            </div>
-            <div class="row plat" data-os="linux">
-              <div class="name">Linux<span class="you">Your system</span></div>
-              <p class="what">AppImage for most distributions, DEB for Debian, Ubuntu and Mint, or a <a class="link" id="tarballLink" href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">tar.gz</a>.</p>
+            </li>
+            <li class="item plat" data-os="linux">
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"/></svg>
+              <div class="os">Linux<span class="tag">This device</span><small>x86-64, Ubuntu 22.04 or newer</small></div>
+              <span class="file mono" data-file>AppImage, DEB or <a class="link" id="tarballLink" href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">tar.gz</a></span>
               <div class="acts">
-                <a class="btn btn-primary" data-dl href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">AppImage</a>
-                <a class="btn btn-ghost" data-dl-alt href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">DEB</a>
+                <a class="btn btn-blue" data-dl href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">AppImage</a>
+                <a class="btn btn-plain" data-dl-alt href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">DEB</a>
               </div>
-            </div>
-            <div class="row" id="row-android">
-              <div class="name">Android<span class="you">Your phone</span></div>
-              <div>
-                <p class="what">Android 8 and later. The button picks the right file for your phone.</p>
+            </li>
+            <li class="item" id="row-android">
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg>
+              <div class="os">Android<span class="tag">This device</span><small>Android 8 or later</small></div>
+              <div class="file">
+                <span class="mono" id="apkName">APK for your phone</span>
                 <p class="android-note" id="androidNote" hidden></p>
               </div>
               <div class="acts">
-                <a class="btn btn-primary" id="androidDownload" href="https://github.com/GrabLine/grabline-android/releases/latest" target="_blank" rel="noopener">Android APK</a>
+                <a class="btn btn-blue" id="androidDownload" href="https://github.com/GrabLine/grabline-android/releases/latest" target="_blank" rel="noopener">Download APK</a>
               </div>
-            </div>
-            <div class="row" id="row-extension">
-              <div class="name">Browser</div>
-              <p class="what">GrabLine Connect for Firefox. Chrome, Edge and Brave connect from Browser Setup in the desktop app.</p>
+            </li>
+            <li class="item" id="row-firefox">
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.824 7.287c.008 0 .004 0 0 0zm-2.8-1.4c.006 0 .003 0 0 0zm16.754 2.161c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 01-.13-.24 2.118 2.118 0 01-.172-.46.03.03 0 00-.027-.03.038.038 0 00-.021 0l-.006.001a.037.037 0 00-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 00-2.305.587.297.297 0 00-.147.37c.057.162.24.24.396.17a5.622 5.622 0 012.008-.523l.067-.005a5.847 5.847 0 011.957.222l.095.03a5.816 5.816 0 01.616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 01.368.211 5.953 5.953 0 012.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 01-1.513-.292 4.42 4.42 0 01-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 00-.301-.227 5.388 5.388 0 01-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.816 9.816 0 00-1.562 3.52c-.003.013-.11.487-.19 1.073-.013.09-.026.181-.037.272a7.8 7.8 0 00-.069.667l-.002.034-.023.387-.001.06C.386 18.795 5.593 24 12.016 24c5.752 0 10.527-4.176 11.463-9.661.02-.149.035-.298.052-.448.232-1.994-.025-4.09-.753-5.844z"/></svg>
+              <div class="os">Firefox<small>With the desktop app</small></div>
+              <span class="file">GrabLine Connect on Firefox Add-ons</span>
               <div class="acts">
-                <a class="btn btn-primary" href="https://addons.mozilla.org/en-US/firefox/addon/grabline-connect/" target="_blank" rel="noopener">Firefox add on</a>
-                <a class="btn btn-ghost" href="https://github.com/GrabLine/GrabLine/blob/main/extension/README.md" target="_blank" rel="noopener">Chrome setup</a>
+                <a class="btn btn-plain" href="https://addons.mozilla.org/en-US/firefox/addon/grabline-connect/" target="_blank" rel="noopener">Add to Firefox</a>
               </div>
-            </div>
-          </div>
+            </li>
+            <li class="item" id="row-chrome">
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728Z"/></svg>
+              <div class="os">Chrome, Edge, Brave<small>With the desktop app</small></div>
+              <span class="file">Open <b>Browser Setup</b> in GrabLine and follow the steps.</span>
+              <div class="acts">
+                <a class="btn btn-plain" href="https://github.com/GrabLine/GrabLine/blob/main/extension/README.md" target="_blank" rel="noopener">Setup guide</a>
+              </div>
+            </li>
+          </ul>
           <p class="fine">
             The desktop apps are not code signed yet, so your system asks once. On Windows choose <b>More info</b>, then <b>Run anyway</b>.
-            On macOS, right click GrabLine and choose <b>Open</b>. When Windows asks about the firewall the first time you pair a phone, choose <b>Allow</b>.
+            On macOS, right click GrabLine and choose <b>Open</b>. The first time you pair a phone, Windows asks about the firewall: choose <b>Allow</b>.
             <a class="link" href="https://github.com/GrabLine/GrabLine/blob/main/docs/install.md" target="_blank" rel="noopener">Install guide</a>
           </p>
         </div>
       </section>
 
-      <section id="faq">
-        <div class="wrap two">
-          <div>
-            <div class="head">
-              <h2>Private by design</h2>
-            </div>
-            <div class="promises">
-              <p><b>No ads and no account.</b> Every feature is free.</p>
-              <p><b>No tracking.</b> No usage data leaves your devices. <a class="link" href="https://github.com/GrabLine/GrabLine/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy policy</a></p>
-              <p><b>Your network only.</b> Paired devices talk over your Wi-Fi, and nothing opens a port on your router.</p>
-              <p><b>No DRM removal.</b> Netflix, Disney+, Spotify and similar services are not supported.</p>
-              <p><b>Free, and built in spare time.</b> If it helps you, <a class="link" href="https://ko-fi.com/zain021xd" target="_blank" rel="noopener">buy me a coffee</a> or <a class="link" href="https://github.com/GrabLine/GrabLine" target="_blank" rel="noopener">star it on GitHub</a>.</p>
-            </div>
+      <section class="close pad" id="faq">
+        <div>
+          <h2>What GrabLine does not do</h2>
+          <div class="facts">
+            <p><b>No ads, no account, no tracking.</b> Nothing about how you use it leaves your devices. <a class="link" href="https://github.com/GrabLine/GrabLine/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy policy</a></p>
+            <p><b>No internet access to your PC.</b> Paired devices only talk over your own network, and nothing opens a port on your router.</p>
+            <p><b>No DRM removal.</b> Netflix, Disney+, Spotify and similar services are not supported.</p>
+            <p><b>No price.</b> It is open source under AGPL 3.0 and built in spare time. If it helps you, <a class="link" href="https://ko-fi.com/zain021xd" target="_blank" rel="noopener">buy me a coffee</a>.</p>
           </div>
-          <div>
-            <div class="head">
-              <h2>Questions</h2>
-            </div>
-            <div class="faq">
-              <details class="qa">
-                <summary>Do I need the desktop app to use the phone app?</summary>
-                <p>No. The Android app downloads on its own. Pairing it with a PC adds sending links between them and controlling the PC's downloads.</p>
-              </details>
-              <details class="qa">
-                <summary>How do I connect my phone to my PC?</summary>
-                <p>Put both on the same Wi-Fi. On the PC open <b>Devices</b>, click <b>Pair a phone or PC</b> and scan the code with the app. If scanning does not work, tap <b>Enter the code by hand</b> and type the address and code shown under the QR code.</p>
-              </details>
-              <details class="qa">
-                <summary>Can I control downloads away from home?</summary>
-                <p>Not yet. Devices only talk over your own network, so nothing is open to the internet.</p>
-              </details>
-              <details class="qa">
-                <summary>Is there an iPhone app?</summary>
-                <p>Not at the moment. GrabLine runs on Windows, macOS, Linux and Android.</p>
-              </details>
-              <details class="qa">
-                <summary>How is it different from IDM?</summary>
-                <p>Both split files into parallel connections and add a browser button. GrabLine is open source, runs on every desktop system and on Android, includes video, torrents and cloud, and sends no usage data.</p>
-              </details>
-              <details class="qa">
-                <summary>Is it really free?</summary>
-                <p>Yes. It is open source under AGPL 3.0 with no paid tier. The code for the <a href="https://github.com/GrabLine/GrabLine" target="_blank" rel="noopener">desktop app</a> and the <a href="https://github.com/GrabLine/grabline-android" target="_blank" rel="noopener">Android app</a> is on GitHub.</p>
-              </details>
-            </div>
-          </div>
+        </div>
+        <div>
+          <h2>Questions</h2>
+          <details class="qa">
+            <summary>Do I need the PC app to use the phone app?</summary>
+            <p>No. The Android app downloads on its own. Pairing it with a PC adds sending links between them and watching the PC's downloads.</p>
+          </details>
+          <details class="qa">
+            <summary>How do I pair my phone with my PC?</summary>
+            <p>Connect both to the same Wi-Fi. In GrabLine on the PC, open <b>Devices</b> and click <b>Pair a phone or PC</b>, then scan the code in the Android app. If the camera does not work, tap <b>Enter the code by hand</b>.</p>
+          </details>
+          <details class="qa">
+            <summary>Is there an iPhone app?</summary>
+            <p>Not at the moment.</p>
+          </details>
+          <details class="qa">
+            <summary>Where is the source code?</summary>
+            <p>On GitHub: the <a class="link" href="https://github.com/GrabLine/GrabLine" target="_blank" rel="noopener">desktop app and extension</a>, and the <a class="link" href="https://github.com/GrabLine/grabline-android" target="_blank" rel="noopener">Android app</a>.</p>
+          </details>
         </div>
       </section>
     </main>
 
-    <footer>
-      <div class="wrap foot">
-        <a class="brand" href="#top" aria-label="GrabLine home"><img src="assets/logo.png?v=7" width="28" height="28" alt="" /><span aria-hidden="true">Grab<span class="line">Line</span></span></a>
-        <span>Free and open source, AGPL 3.0</span>
-        <nav aria-label="Footer">
-          <a href="https://github.com/GrabLine/GrabLine" target="_blank" rel="noopener">Desktop on GitHub</a>
-          <a href="https://github.com/GrabLine/grabline-android" target="_blank" rel="noopener">Android on GitHub</a>
-          <a href="https://github.com/GrabLine/GrabLine/releases" target="_blank" rel="noopener">Releases</a>
-          <a href="https://github.com/GrabLine/GrabLine/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a>
-          <a href="https://github.com/GrabLine/GrabLine/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy</a>
-          <a href="https://github.com/GrabLine/GrabLine/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
-        </nav>
-      </div>
+    <footer class="pad">
+      <span>GrabLine, free and open source</span>
+      <nav aria-label="Footer">
+        <a href="https://github.com/GrabLine/GrabLine/releases" target="_blank" rel="noopener">Releases</a>
+        <a href="https://github.com/GrabLine/GrabLine/issues" target="_blank" rel="noopener">Report a bug</a>
+        <a href="https://github.com/GrabLine/GrabLine/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a>
+        <a href="https://github.com/GrabLine/GrabLine/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy</a>
+        <a href="https://github.com/GrabLine/GrabLine/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+      </nav>
     </footer>
 
     <script>
-      // Mobile menu
-      const nav = document.getElementById("nav");
-      const navToggle = document.getElementById("navToggle");
-      const closeNav = () => {
-        nav.classList.remove("open");
-        navToggle.setAttribute("aria-expanded", "false");
-        navToggle.textContent = "Menu";
-      };
-      navToggle.addEventListener("click", () => {
-        const open = nav.classList.toggle("open");
-        navToggle.setAttribute("aria-expanded", open ? "true" : "false");
-        navToggle.textContent = open ? "Close" : "Menu";
-      });
-      document.querySelectorAll("#navLinks a").forEach((a) => a.addEventListener("click", closeNav));
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && nav.classList.contains("open")) closeNav();
-      });
-
-      // App tabs. Arrow keys move between them, as in any tab list.
-      const tabs = [...document.querySelectorAll('[role="tab"]')];
-      function showTab(name, focus) {
-        tabs.forEach((tab) => {
-          const on = tab.id === "tab-" + name;
-          tab.setAttribute("aria-selected", on ? "true" : "false");
-          tab.tabIndex = on ? 0 : -1;
-          document.getElementById(tab.getAttribute("aria-controls")).hidden = !on;
-          if (on && focus) tab.focus();
-        });
-      }
-      tabs.forEach((tab, i) => {
-        tab.addEventListener("click", () => showTab(tab.id.slice(4)));
-        tab.addEventListener("keydown", (e) => {
-          const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-          if (step) showTab(tabs[(i + step + tabs.length) % tabs.length].id.slice(4), true);
-        });
-      });
-      document.querySelectorAll("[data-tab]").forEach((a) => a.addEventListener("click", () => showTab(a.dataset.tab)));
-
-      // Which device is this?
+      // Which device is this? Phones and tablets get no desktop build.
       function detectOS() {
         const s = (navigator.userAgent + " " + (navigator.platform || "")).toLowerCase();
-        if (/iphone|ipad|ipod|android/.test(s)) return null; // phones and tablets get no desktop build
+        if (/iphone|ipad|ipod|android/.test(s)) return null;
         if (s.includes("mac") && navigator.maxTouchPoints > 1) return null; // iPadOS
         if (s.includes("win")) return "windows";
         if (s.includes("mac")) return "mac";
@@ -1023,23 +881,36 @@
       }
       const onAndroid = /android/i.test(navigator.userAgent);
       const osKey = detectOS();
-      const osName = { windows: "Windows", mac: "macOS", linux: "Linux" }[osKey];
+      const OS = {
+        windows: { name: "Windows", req: "Windows 10 or 11, 64-bit." },
+        mac: { name: "macOS", req: "Macs with Apple Silicon." },
+        linux: { name: "Linux", req: "x86-64, Ubuntu 22.04 or newer." },
+      };
       const heroBtn = document.getElementById("heroDownload");
-      const heroAlt = document.getElementById("heroAlt");
-      const dlGrid = document.getElementById("dlGrid");
-      if (osName) heroBtn.textContent = "Download for " + osName;
+      const heroLabel = document.getElementById("heroLabel");
+      const heroVer = document.getElementById("heroVer");
+      const heroReq = document.getElementById("heroReq");
+      const list = document.getElementById("dlGrid");
+      const releaseNotes = heroReq.querySelector("a");
+
+      function setReq(text) {
+        heroReq.replaceChildren(text + " ", releaseNotes);
+      }
       if (osKey) {
-        const yours = dlGrid.querySelector('.plat[data-os="' + osKey + '"]');
-        if (yours) dlGrid.prepend(yours);
+        heroLabel.textContent = "Download for " + OS[osKey].name;
+        setReq(OS[osKey].req);
+        const mine = list.querySelector('.plat[data-os="' + osKey + '"]');
+        mine.classList.add("mine");
+        list.prepend(mine);
       }
       if (onAndroid) {
+        document.documentElement.classList.add("android");
+        heroLabel.textContent = "Download for Android";
+        setReq("Android 8 or later.");
+        releaseNotes.href = "https://github.com/GrabLine/grabline-android/releases/latest";
         const row = document.getElementById("row-android");
-        row.classList.add("is-you");
-        dlGrid.prepend(row);
-        showTab("android");
-        heroBtn.textContent = "Get the Android app";
-        heroAlt.textContent = "See all apps";
-        heroAlt.removeAttribute("data-tab");
+        row.classList.add("mine");
+        list.prepend(row);
       }
 
       function matchAsset(assets, os) {
@@ -1062,20 +933,26 @@
         .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
         .then((rel) => {
           const assets = rel.assets || [];
-          if (rel.tag_name) document.getElementById("dlVersion").textContent = rel.tag_name;
+          const version = (rel.tag_name || "").replace(/^v/, "");
+          if (version) document.getElementById("dlVersion").textContent = version;
           const tarball = assets.find((a) => /linux.*\.tar\.gz$/i.test(a.name));
           if (tarball) document.getElementById("tarballLink").href = tarball.browser_download_url;
-          document.querySelectorAll(".plat").forEach((row) => {
+          list.querySelectorAll(".plat").forEach((row) => {
             const os = row.getAttribute("data-os");
             const asset = matchAsset(assets, os);
-            if (asset) row.querySelector("[data-dl]").href = asset.browser_download_url;
+            if (asset) {
+              row.querySelector("[data-dl]").href = asset.browser_download_url;
+              if (os !== "linux") row.querySelector("[data-file]").textContent = asset.name;
+            }
             const alt = matchAltAsset(assets, os);
             const altBtn = row.querySelector("[data-dl-alt]");
             if (altBtn && alt) altBtn.href = alt.browser_download_url;
-            if (os === osKey) row.classList.add("is-you");
           });
           const mine = osKey && matchAsset(assets, osKey);
-          if (mine) heroBtn.href = mine.browser_download_url;
+          if (mine) {
+            heroBtn.href = mine.browser_download_url;
+            heroVer.textContent = version;
+          }
         })
         .catch(() => {
           // No file or no network: the buttons keep their links to the release page.
@@ -1114,9 +991,6 @@
         const ends = (suffix) => apks.find((a) => a.name.toLowerCase().endsWith("-" + suffix + ".apk"));
         return (abi && ends(abi)) || ends("arm64-v8a") || ends("universal") || apks[0] || null;
       }
-      function apkLabel(apk) {
-        return apk.name.replace(/^GrabLine-v[\d.]+-/i, "").replace(/\.apk$/i, "");
-      }
       function sizeLabel(bytes) {
         // Decimal units, as phones show them in the download prompt.
         return bytes >= 1e6 ? Math.round(bytes / 1e6) + " MB" : Math.max(1, Math.round(bytes / 1e3)) + " KB";
@@ -1138,20 +1012,19 @@
           if (!apk) return;
           androidBtn.href = apk.browser_download_url;
           androidBtn.removeAttribute("target"); // a download, not a page: stay here
-          androidBtn.textContent = "Download APK";
+          document.getElementById("apkName").textContent = apk.name + ", " + sizeLabel(apk.size);
           if (onAndroid) {
             heroBtn.href = apk.browser_download_url;
-            heroBtn.textContent = "Download for Android";
+            heroVer.textContent = (rel.tag_name || "").replace(/^v/, "");
           }
           androidNote.replaceChildren();
-          androidNote.append(rel.tag_name + ", " + apkLabel(apk) + ", " + sizeLabel(apk.size) + ".");
           if (facts.major !== null && facts.major < 8) {
-            androidNote.append(" This phone runs Android " + facts.major + ", and GrabLine needs Android 8 or later.");
+            androidNote.append("This phone runs Android " + facts.major + ", and GrabLine needs Android 8 or later. ");
           } else if (!onAndroid) {
-            androidNote.append(" Open this page on your phone to get the right file for it.");
+            androidNote.append("Open this page on your phone to get the right file for it. ");
           }
           const universal = assets.find((a) => /-universal\.apk$/i.test(a.name));
-          androidNote.append(" Not installing? Try ");
+          androidNote.append("Not installing? Try ");
           if (universal && universal !== apk) androidNote.append(noteLink("the universal APK", universal.browser_download_url), " or ");
           androidNote.append(noteLink("all versions", RELEASES), ".");
           androidNote.hidden = false;
