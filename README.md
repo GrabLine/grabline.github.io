@@ -1,8 +1,11 @@
 # GrabLine website
 
 The website for [GrabLine](https://github.com/GrabLine/GrabLine), published at
-https://grabline.github.io/. Desktop and browser-extension code stays in the
-main GrabLine repository. This repository preserves the original `website/`
+https://grabline.github.io/. It presents the desktop app, GrabLine for Android
+and the GrabLine Connect extension, and points each download button at the
+latest release. Desktop and browser-extension code stays in the main GrabLine
+repository; the Android app lives in
+[grabline-android](https://github.com/GrabLine/grabline-android). This repository preserves the original `website/`
 directory's history, filtered from development commit
 `613aeb181890860b4ed58cd2c72c5cf82fa4476a` in a separate fresh clone.
 
@@ -13,12 +16,17 @@ Use Python 3.12 or later and Git; there are no Python package dependencies.
 ```sh
 python -m unittest discover -s tests -v
 gh api repos/GrabLine/GrabLine/releases/latest > release.json
-python scripts/build_site.py --release-json release.json
+gh api repos/GrabLine/grabline-android/releases/latest > android.json
+python scripts/build_site.py --release-json release.json --android-release-json android.json
 python -m http.server --directory _site 8000
 ```
 
-`release.json` is temporary build input; do not commit it. The builder generates
-`_site/latest.json` and sets JSON-LD `softwareVersion` from the release tag.
+`release.json` and `android.json` are temporary build input; do not commit them.
+The builder generates `_site/latest.json` and `_site/android-latest.json` (APK
+names, sizes and links, each checked to be an https download from the Android
+repository) and sets JSON-LD `softwareVersion` from the desktop release tag. The
+page reads both files to point its buttons at the file that fits the visitor's
+system or phone.
 The sitemap uses the later of the last published-content commit date and the
 release publication date. Rebuilding unchanged content preserves that date.
 Use a full Git checkout for accurate history; source archives can supply an
@@ -26,7 +34,10 @@ explicit `--lastmod YYYY-MM-DD`. A new app release needs no manual website
 version bump.
 
 The Pages workflow runs after a main push, manual dispatch, `release-published`
-repository dispatch and a weekly Monday fallback. GitHub can disable scheduled
+repository dispatch and a daily fallback, so a new Android release appears within
+a day. It builds in one job and deploys in a second job that needs the first, as
+GitHub recommends; a deploy in the same job as the upload sometimes found no
+artifact yet. GitHub can disable scheduled
 workflows after 60 days without repository activity; release dispatch is the
 primary automatic update path. Its fine-grained token belongs in the desktop
 repository's `WEBSITE_DISPATCH_TOKEN` secret, never in this repository.
@@ -51,3 +62,11 @@ The site retains the parent project's AGPL-3.0-or-later license. See
 [GrabLine issue tracker](https://github.com/GrabLine/GrabLine/issues) with the
 `area:website` label; questions belong in
 [Q&A](https://github.com/GrabLine/GrabLine/discussions/categories/q-a).
+
+## Screenshots
+
+The images in `assets/` are real screenshots of the current releases, taken with
+demo downloads (open movies, Debian, Blender, LibreOffice) so no personal files
+appear. Keep them in the app's dark theme and replace them when the interface
+changes. The same set lives in the desktop repository's `docs/screenshots/` and
+the Android repository's `docs/screenshots/`.
