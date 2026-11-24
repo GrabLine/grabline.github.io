@@ -9,7 +9,7 @@
       content="GrabLine is a free, open source download manager for Windows, macOS, Linux and Android, with a browser extension. Fast downloads, video, torrents and servers, and your phone paired with your PC."
     />
     <link rel="canonical" href="https://grabline.github.io/" />
-    <meta name="theme-color" content="#f3f4f6" />
+    <meta name="theme-color" content="#0a0d14" />
     <link rel="icon" href="assets/favicon.png?v=6" />
     <link rel="apple-touch-icon" href="assets/logo.png?v=7" />
     <meta property="og:type" content="website" />
@@ -40,7 +40,7 @@
         "screenshot": [
           "https://grabline.github.io/assets/shot-downloads.webp",
           "https://grabline.github.io/assets/shot-devices.webp",
-          "https://grabline.github.io/assets/phone-add.webp",
+          "https://grabline.github.io/assets/phone-share.webp",
           "https://grabline.github.io/assets/ext-popup.webp"
         ],
         "author": { "@type": "Organization", "name": "GrabLine" }
@@ -63,27 +63,32 @@
         src: url("assets/fonts/ibm-plex-mono-400.woff2") format("woff2");
       }
       /*
-        GrabLine site system
-        Page: light cool grey, so the dark app screenshots read as real windows.
-        One dark band (night) for the phone and PC story.
-        Accent: the logo's blue, used for actions and links only.
-        Radius: screenshots 10px like app windows, buttons 8px, phones 24px.
-        Mono: only for real file names and versions.
+        GrabLine site system (dark only, like the apps)
+        Ink background, slightly lighter surfaces, one blue-tinted band for the
+        phone and PC story. The logo's blue for actions; a lighter blue for
+        text links so they pass contrast. Screenshots 10px like app windows,
+        buttons 8px, phones 24px. Mono only for real file names and versions.
+        Motion: the "line" in GrabLine. A progress line under the top bar
+        follows the scroll, and screenshots reveal top to bottom as they
+        come into view, like a download finishing.
       */
       :root {
-        --paper: #f3f4f6;
-        --white: #ffffff;
-        --ink: #10141b;
-        --muted: #566072;
-        --line: #dce0e6;
+        --paper: #0a0d14;
+        --white: #111724;
+        --ink: #e8eef8;
+        --muted: #9aa6ba;
+        --line: #222b3b;
         --blue: #2563eb;
-        --blue-dark: #1d4fd0;
-        --night: #0e1524;
-        --night-line: #24304a;
-        --night-muted: #a7b2c6;
+        --blue-dark: #3b7af5;
+        --link: #6ea2ff;
+        --night: #0f1a33;
+        --night-line: #2a3a5e;
+        --night-muted: #b3bed2;
+        --frame: #2b3650;
         --sans: "IBM Plex Sans", system-ui, sans-serif;
         --mono: "IBM Plex Mono", ui-monospace, monospace;
         --gutter: max(20px, calc((100vw - 1120px) / 2));
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
       }
       * {
         box-sizing: border-box;
@@ -153,13 +158,13 @@
         padding-inline: var(--gutter);
       }
       .link {
-        color: var(--blue);
+        color: var(--link);
         text-decoration: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 3px;
       }
       .link:hover {
-        color: var(--blue-dark);
+        color: #fff;
       }
       .mono {
         font-family: var(--mono);
@@ -198,7 +203,7 @@
         color: var(--ink);
       }
       .btn-plain:hover {
-        border-color: var(--ink);
+        border-color: var(--link);
       }
       .btn .ver {
         font-family: var(--mono);
@@ -251,35 +256,34 @@
         background: var(--white);
       }
 
-      /* Hero: the product first, screenshot running off the right edge */
+      /* Hero: name on the left, the download on the right, the product below */
       .hero {
         display: grid;
-        grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
-        gap: 56px;
-        align-items: center;
-        padding: 72px 0 88px var(--gutter);
-        overflow: hidden;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px 48px;
+        align-items: end;
+        padding-block: 72px 120px;
       }
       .hero .icon {
-        width: 72px;
-        height: 72px;
+        width: 64px;
+        height: 64px;
       }
       .hero h1 {
-        margin-top: 20px;
-        font-size: clamp(3rem, 6vw, 4.4rem);
+        margin-top: 18px;
+        font-size: clamp(3rem, 7vw, 5.2rem);
         font-weight: 700;
-        line-height: 1;
-        letter-spacing: -0.035em;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
       }
       .hero .what {
-        margin-top: 14px;
-        font-size: 1.2rem;
+        margin-top: 16px;
+        font-size: 1.25rem;
         line-height: 1.45;
         color: var(--muted);
-        max-width: 26ch;
+        max-width: 30ch;
       }
-      .hero .btn {
-        margin-top: 30px;
+      .hero .action {
+        text-align: right;
       }
       .hero .req {
         margin-top: 12px;
@@ -289,29 +293,29 @@
       .hero .req a {
         color: var(--muted);
       }
-      .hero .shot {
-        width: min(980px, 100%);
-        min-width: 620px;
-        border-radius: 10px 0 0 10px;
-        box-shadow: 0 24px 60px -24px rgba(16, 20, 27, 0.45), 0 0 0 1px rgba(16, 20, 27, 0.1);
+      .stage {
+        grid-column: 1 / -1;
+        position: relative;
+        margin-top: 40px;
       }
-      .hero .shot-phone {
-        display: none;
-        width: 260px;
+      .stage .shot {
+        width: 88%;
+        border-radius: 10px;
+        box-shadow: 0 40px 100px -40px rgba(37, 99, 235, 0.45), 0 0 0 1px var(--frame);
+      }
+      .stage .phone {
+        position: absolute;
+        right: 0;
+        bottom: -56px;
+        width: 22%;
         border-radius: 24px;
         border: 6px solid #1c2334;
-        box-shadow: 0 24px 60px -24px rgba(16, 20, 27, 0.5);
-      }
-      .android .hero .shot {
-        display: none;
-      }
-      .android .hero .shot-phone {
-        display: block;
+        box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.85);
       }
 
       /* What it downloads: plain text, four kinds */
       .kinds {
-        padding-block: 24px 112px;
+        padding-block: 24px 96px;
       }
       .kinds h2 {
         max-width: 22ch;
@@ -402,6 +406,63 @@
         font-size: 0.92rem;
       }
 
+      /* Feature showcases */
+      .show {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+        gap: 72px;
+        align-items: center;
+        padding-block: 40px 96px;
+      }
+      .show .shot {
+        border-radius: 10px;
+        box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--frame);
+      }
+      .show p {
+        margin-top: 16px;
+        color: var(--muted);
+        max-width: 46ch;
+      }
+      .show .small {
+        font-size: 0.92rem;
+      }
+      .show.flip {
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+      }
+      .show.flip .shot {
+        order: 2;
+      }
+      .index {
+        padding-block: 40px 112px;
+      }
+      .groups {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 40px;
+        margin-top: 36px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+      }
+      .groups ul {
+        margin-top: 12px;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 0.97rem;
+      }
+      .phone-list {
+        margin-top: 22px;
+        padding-left: 1.1em;
+        display: grid;
+        gap: 8px;
+        color: var(--night-muted);
+      }
+      .phone-list li::marker {
+        color: var(--link);
+      }
+
       /* Extension */
       .ext {
         display: grid;
@@ -414,7 +475,7 @@
         width: min(360px, 100%);
         justify-self: center;
         border-radius: 10px;
-        box-shadow: 0 24px 60px -28px rgba(16, 20, 27, 0.45), 0 0 0 1px rgba(16, 20, 27, 0.1);
+        box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--frame);
       }
       .ext p {
         margin-top: 18px;
@@ -429,7 +490,7 @@
         gap: 8px;
       }
       .ext li::marker {
-        color: var(--blue);
+        color: var(--link);
       }
       .ext .acts {
         display: flex;
@@ -493,7 +554,7 @@
         font-size: 0.95rem;
       }
       .item.mine {
-        background: linear-gradient(90deg, rgba(37, 99, 235, 0.06), transparent 70%);
+        background: linear-gradient(90deg, rgba(37, 99, 235, 0.14), transparent 70%);
       }
       .item .tag {
         display: none;
@@ -514,7 +575,7 @@
         font-size: 0.88rem;
       }
       .android-note a {
-        color: var(--blue);
+        color: var(--link);
       }
       .get .fine {
         margin-top: 24px;
@@ -561,7 +622,7 @@
         list-style-position: outside;
       }
       .qa summary::marker {
-        color: var(--blue);
+        color: var(--link);
       }
       .qa p {
         padding: 0 0 18px;
@@ -591,16 +652,79 @@
         text-decoration: underline;
       }
 
+      /* Motion */
       @media (prefers-reduced-motion: no-preference) {
-        .hero .shot,
-        .hero .shot-phone {
-          animation: slide 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+        /* The logo's arrow drops in, then the product loads. */
+        .hero .icon {
+          animation: drop 0.7s var(--ease) both;
+        }
+        .hero h1,
+        .hero .what,
+        .hero .action {
+          animation: rise 0.8s 0.1s var(--ease) both;
+        }
+        .stage .shot {
+          animation: load 1.1s 0.25s var(--ease) both;
+        }
+        .stage .phone {
+          animation: rise 0.9s 0.7s var(--ease) both;
+        }
+        /* Screenshots further down load in from top to bottom when seen. */
+        .js .reveal {
+          clip-path: inset(0 0 100% 0 round 10px);
+          transition: clip-path 1.1s var(--ease);
+        }
+        .js .reveal.in {
+          clip-path: inset(0 0 0 0 round 10px);
+        }
+        /* A progress line under the top bar fills as you scroll. */
+        @supports (animation-timeline: scroll()) {
+          .bar::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: var(--blue);
+            transform-origin: 0 50%;
+            animation: fill linear both;
+            animation-timeline: scroll(root);
+          }
+        }
+        .btn-blue {
+          transition: background 0.2s, box-shadow 0.25s;
+        }
+        .btn-blue:hover {
+          box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.8);
         }
       }
-      @keyframes slide {
+      @keyframes drop {
         from {
           opacity: 0;
-          transform: translateX(40px);
+          transform: translateY(-18px);
+        }
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+      @keyframes load {
+        from {
+          clip-path: inset(0 0 100% 0 round 10px);
+        }
+        to {
+          clip-path: inset(0 0 0 0 round 10px);
+        }
+      }
+      @keyframes fill {
+        from {
+          transform: scaleX(0);
+        }
+        to {
+          transform: scaleX(1);
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -612,13 +736,18 @@
       @media (max-width: 960px) {
         .hero {
           grid-template-columns: minmax(0, 1fr);
-          gap: 44px;
-          padding: 48px var(--gutter) 64px;
+          gap: 28px;
+          padding-block: 48px 96px;
         }
-        .hero .shot {
-          min-width: 0;
-          width: calc(100% + var(--gutter));
-          max-width: none;
+        .hero .action {
+          text-align: left;
+        }
+        .stage .shot {
+          width: 84%;
+        }
+        .stage .phone {
+          width: 28%;
+          bottom: -40px;
         }
         .band-in,
         .ext,
@@ -628,6 +757,17 @@
         }
         .ext .popup {
           order: 2;
+        }
+        .show,
+        .show.flip {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 32px;
+        }
+        .show.flip .shot {
+          order: 0;
+        }
+        .groups {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
         .item {
           grid-template-columns: 32px minmax(0, 1fr);
@@ -649,7 +789,8 @@
         .bar nav a:not(.keep) {
           display: none;
         }
-        .kinds dl {
+        .kinds dl,
+        .groups {
           grid-template-columns: minmax(0, 1fr);
         }
         .band,
@@ -686,71 +827,140 @@
     </header>
 
     <main id="main">
-      <section class="hero" id="top">
+      <section class="hero pad" id="top">
         <div>
-          <img class="icon" src="assets/logo.png?v=7" width="72" height="72" alt="" />
+          <img class="icon" src="assets/logo.png?v=7" width="64" height="64" alt="" />
           <h1>GrabLine</h1>
-          <p class="what">A free download manager for your PC and your Android phone.</p>
+          <p class="what">Fast, free downloads on your PC and your Android phone.</p>
+        </div>
+        <div class="action">
           <a class="btn btn-blue" id="heroDownload" href="#download"><span id="heroLabel">Download</span> <span class="ver" id="heroVer"></span></a>
           <p class="req" id="heroReq">
             Windows, macOS, Linux and Android.
             <a href="https://github.com/GrabLine/GrabLine/releases/latest" target="_blank" rel="noopener">Release notes</a>
           </p>
         </div>
-        <img class="shot" src="assets/shot-downloads.webp" width="1600" height="833" alt="GrabLine on a PC with downloads in progress" fetchpriority="high" />
-        <img class="shot-phone" src="assets/phone-downloads.webp" width="540" height="1200" alt="GrabLine for Android with downloads in progress" loading="lazy" />
+        <div class="stage">
+          <img class="shot" src="assets/shot-downloads.webp" width="1600" height="833" alt="GrabLine on a PC with downloads in progress" fetchpriority="high" />
+          <img class="phone" src="assets/phone-downloads.webp" width="540" height="1200" alt="GrabLine for Android with downloads in progress" />
+        </div>
       </section>
 
       <section class="kinds pad" aria-labelledby="kinds-title">
-        <h2 id="kinds-title">Downloads files, videos, torrents and server folders</h2>
+        <h2 id="kinds-title">One app for files, video, torrents and servers</h2>
         <dl>
           <div>
             <dt><h3>Big files, fast</h3></dt>
-            <dd>Each file is split across up to 32 connections. If your PC restarts, the download carries on where it stopped.</dd>
+            <dd>Every file is split across up to 32 connections. A dropped connection or a restart picks up exactly where it left off.</dd>
           </div>
           <div>
             <dt><h3>Video and audio</h3></dt>
-            <dd>Paste a video page and choose 1080p, 4K or just the MP3 before it starts. Works on more than 1000 sites.</dd>
+            <dd>Paste a link from more than 1000 sites and choose the quality, or keep only the audio as MP3, M4A or FLAC.</dd>
           </div>
           <div>
             <dt><h3>Torrents</h3></dt>
-            <dd>Magnet links, torrent files, RSS feeds and watch folders, with a limit on how long to seed.</dd>
+            <dd>Magnets, torrent files, RSS feeds and watch folders. Pick the files you want and stop seeding at the ratio you set.</dd>
           </div>
           <div>
             <dt><h3>Servers and shared links</h3></dt>
-            <dd>SFTP, FTP, WebDAV and S3, plus Google Drive and Dropbox share links. Passwords stay in your system keychain.</dd>
+            <dd>SFTP, FTP, WebDAV and S3, plus Google Drive and Dropbox links. Saved passwords live in your system keychain.</dd>
           </div>
         </dl>
-        <p class="also">Queues, schedules and speed limits keep a long list in order.</p>
+      </section>
+
+      <section class="show pad" aria-labelledby="video-title">
+        <img class="shot reveal" src="assets/shot-quality.webp" width="690" height="558" alt="Choosing a video quality, subtitles and a clip range in GrabLine" loading="lazy" />
+        <div>
+          <h2 id="video-title">Choose the quality before it downloads</h2>
+          <p>GrabLine reads the page and lists every format it offers, with the size of each. Pick 4K or 720p, add subtitles, keep the chapters, skip sponsor segments, or save only the part between two timestamps.</p>
+          <p class="small">Powered by yt-dlp and FFmpeg, which GrabLine fetches the first time a video needs them.</p>
+        </div>
+      </section>
+
+      <section class="show flip pad" aria-labelledby="queues-title">
+        <img class="shot reveal" src="assets/shot-queues.webp" width="1600" height="583" alt="The queue manager with Movies, Games and Music queues" loading="lazy" />
+        <div>
+          <h2 id="queues-title">Queues that run themselves</h2>
+          <p>Sort downloads into named queues. Each one has its own limit, can run only at night, can wait for another to finish, and picks up new files of its type on its own.</p>
+          <p class="small">Add a speed limit for the whole app, one download or one website, and an action for when a queue is done.</p>
+        </div>
+      </section>
+
+      <section class="index pad" aria-labelledby="index-title">
+        <h2 id="index-title">And the rest of the toolbox</h2>
+        <div class="groups">
+          <div>
+            <h3>Finding and adding</h3>
+            <ul>
+              <li>Paste or drop links, or import a whole list</li>
+              <li>Collect every image or link on a page</li>
+              <li>Inspect a page for hidden video streams</li>
+              <li>Watch the clipboard for copied links</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Keeping things tidy</h3>
+            <ul>
+              <li>Folders by category, renaming rules and tags</li>
+              <li>Search, notes and duplicate finder</li>
+              <li>Unpack archives when done (RAR and 7z with 7-Zip)</li>
+              <li>Export and import your history</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Staying safe</h3>
+            <ul>
+              <li>Check SHA-256 and other checksums</li>
+              <li>Optional antivirus or VirusTotal check</li>
+              <li>HTTP and SOCKS proxies for files and torrents</li>
+              <li>A live dashboard for speed, disk and network</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Fitting your desktop</h3>
+            <ul>
+              <li>Light or dark theme with your accent colour</li>
+              <li>Tray icon, notifications and shortcuts</li>
+              <li>Run a command or shut down when finished</li>
+              <li>14 languages, including Arabic and Urdu</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section class="band" id="phone" aria-labelledby="phone-title">
         <div class="band-in pad">
           <div>
-            <h2 id="phone-title">Send it to the PC from your phone</h2>
-            <p>Found a file on your phone? Share it to GrabLine and pick <strong>this phone</strong> or <strong>your PC</strong>. The PC downloads it while you are away from the desk, and the phone shows its progress.</p>
-            <p>The Android app is also a full download manager on its own, with video, torrents and servers.</p>
+            <h2 id="phone-title">Start it on your phone. Let the PC do the work.</h2>
+            <p>Share a link from any app to GrabLine and choose <strong>this phone</strong> or <strong>your PC</strong>. Big files go to the PC at home while you watch the progress, pause or retry from the sofa.</p>
+            <ul class="phone-list">
+              <li>A full download manager on its own: files, video, torrents and servers</li>
+              <li>Copy a finished file from the PC to the phone, checked with SHA-256</li>
+              <li>Opens file links from other apps, and has a widget and a quick tile</li>
+              <li>Pair a second PC and send downloads between computers too</li>
+            </ul>
             <div class="acts">
               <a class="btn btn-blue" href="#download">Get the Android app</a>
             </div>
-            <p class="note">Pairing takes one QR code and stays on your Wi-Fi, encrypted, with no account or cloud server.</p>
+            <p class="note">Pairing takes one QR code and stays on your Wi-Fi, encrypted, with no account or cloud server in between.</p>
           </div>
           <div class="duo">
-            <img class="pc" src="assets/shot-devices.webp" width="1600" height="1000" alt="The Devices page on the PC showing downloads running on a paired phone" loading="lazy" />
-            <img class="phone" src="assets/phone-add.webp" width="540" height="1200" alt="Sharing a link on the phone and choosing to download it on the PC" loading="lazy" />
+            <img class="pc reveal" src="assets/shot-devices.webp" width="1600" height="1000" alt="The Devices page on the PC showing downloads running on a paired phone" loading="lazy" />
+            <img class="phone" src="assets/phone-share.webp" width="540" height="1200" alt="Sharing a link on the phone and choosing to download it on the PC" loading="lazy" />
           </div>
         </div>
       </section>
 
       <section class="ext pad" id="extension" aria-labelledby="ext-title">
-        <img class="popup" src="assets/ext-popup.webp" width="680" height="1080" alt="The GrabLine Connect popup listing videos found on a web page" loading="lazy" />
+        <img class="popup reveal" src="assets/ext-popup.webp" width="680" height="1080" alt="The GrabLine Connect popup listing videos found on a web page" loading="lazy" />
         <div>
-          <h2 id="ext-title">A download button in your browser</h2>
-          <p>GrabLine Connect adds a button to the videos and links you meet while browsing, and lists everything it finds on the page.</p>
+          <h2 id="ext-title">A download button on every video</h2>
+          <p>GrabLine Connect puts a small button on the videos, audio and links you come across, and its popup lists every file it found in the tab. One click sends it to GrabLine with the right quality and cookies.</p>
           <ul>
-            <li>Firefox, Chrome, Edge and Brave</li>
-            <li>Hands your browser's downloads to GrabLine, if you want</li>
-            <li>Talks only to GrabLine on your own computer</li>
+            <li>Works in Firefox, Chrome, Edge and Brave</li>
+            <li>Can take over your browser's own downloads</li>
+            <li>Shows progress right on the page, if you like</li>
+            <li>Talks only to GrabLine on your computer, never to a server</li>
           </ul>
           <div class="acts">
             <a class="btn btn-plain" href="https://addons.mozilla.org/en-US/firefox/addon/grabline-connect/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.824 7.287c.008 0 .004 0 0 0zm-2.8-1.4c.006 0 .003 0 0 0zm16.754 2.161c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 01-.13-.24 2.118 2.118 0 01-.172-.46.03.03 0 00-.027-.03.038.038 0 00-.021 0l-.006.001a.037.037 0 00-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 00-2.305.587.297.297 0 00-.147.37c.057.162.24.24.396.17a5.622 5.622 0 012.008-.523l.067-.005a5.847 5.847 0 011.957.222l.095.03a5.816 5.816 0 01.616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 01.368.211 5.953 5.953 0 012.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 01-1.513-.292 4.42 4.42 0 01-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 00-.301-.227 5.388 5.388 0 01-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.816 9.816 0 00-1.562 3.52c-.003.013-.11.487-.19 1.073-.013.09-.026.181-.037.272a7.8 7.8 0 00-.069.667l-.002.034-.023.387-.001.06C.386 18.795 5.593 24 12.016 24c5.752 0 10.527-4.176 11.463-9.661.02-.149.035-.298.052-.448.232-1.994-.025-4.09-.753-5.844z"/></svg>Add to Firefox</a>
@@ -869,6 +1079,24 @@
     </footer>
 
     <script>
+      document.documentElement.classList.add("js");
+      // Screenshots load in once they scroll into view.
+      if ("IntersectionObserver" in window) {
+        const seen = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("in");
+                seen.unobserve(e.target);
+              }
+            }),
+          { threshold: 0.2 }
+        );
+        document.querySelectorAll(".reveal").forEach((el) => seen.observe(el));
+      } else {
+        document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
+      }
+
       // Which device is this? Phones and tablets get no desktop build.
       function detectOS() {
         const s = (navigator.userAgent + " " + (navigator.platform || "")).toLowerCase();
@@ -904,7 +1132,6 @@
         list.prepend(mine);
       }
       if (onAndroid) {
-        document.documentElement.classList.add("android");
         heroLabel.textContent = "Download for Android";
         setReq("Android 8 or later.");
         releaseNotes.href = "https://github.com/GrabLine/grabline-android/releases/latest";
