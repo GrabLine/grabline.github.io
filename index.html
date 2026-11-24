@@ -293,21 +293,21 @@
       .hero .req a {
         color: var(--muted);
       }
+      /* PC and phone side by side at the same height, never overlapping:
+         1600x833 next to 540x1200 means the phone column is 0.234 of the PC. */
       .stage {
         grid-column: 1 / -1;
-        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.234fr);
+        gap: 28px;
+        align-items: center;
         margin-top: 40px;
       }
       .stage .shot {
-        width: 88%;
         border-radius: 10px;
         box-shadow: 0 40px 100px -40px rgba(37, 99, 235, 0.45), 0 0 0 1px var(--frame);
       }
       .stage .phone {
-        position: absolute;
-        right: 0;
-        bottom: -56px;
-        width: 22%;
         border-radius: 24px;
         border: 6px solid #1c2334;
         box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.85);
@@ -382,21 +382,18 @@
       .band .acts .btn {
         margin-top: 32px;
       }
+      /* Same rule in the band: 1600x1000 next to the phone, phone 0.28 of it. */
       .duo {
-        position: relative;
-        padding-bottom: 40px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.28fr);
+        gap: 20px;
+        align-items: center;
       }
       .duo .pc {
         border-radius: 10px;
         box-shadow: 0 0 0 1px var(--night-line);
-        width: 86%;
-        margin-left: 14%;
       }
       .duo .phone {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 30%;
         border-radius: 24px;
         border: 6px solid #232c40;
         box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.8);
@@ -742,13 +739,6 @@
         .hero .action {
           text-align: left;
         }
-        .stage .shot {
-          width: 84%;
-        }
-        .stage .phone {
-          width: 28%;
-          bottom: -40px;
-        }
         .band-in,
         .ext,
         .close {
@@ -800,13 +790,6 @@
         .ext,
         .close {
           padding-block: 80px;
-        }
-        .duo .pc {
-          width: 82%;
-          margin-left: 18%;
-        }
-        .duo .phone {
-          width: 36%;
         }
         footer nav {
           margin-left: 0;
